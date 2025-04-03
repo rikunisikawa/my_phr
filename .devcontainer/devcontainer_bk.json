@@ -1,0 +1,27 @@
+// {
+//   "name": "Ruby on Rails Development",
+//   "dockerComposeFile": ["../compose.yml"],
+//   "service": "web",
+//   "workspaceFolder": "/my_phr",
+//   "customizations": {
+//     "vscode": {
+//       "settings": {
+//         "terminal.integrated.defaultProfile.linux": "bash",
+//         "editor.formatOnSave": true
+//       },
+//       "extensions": [
+//         "rebornix.Ruby",                     // Ruby の基本サポート
+//         "misogi.ruby-rubocop",               // RuboCop サポート
+//         "castwide.solargraph",               // Ruby のコード補完
+//         "github.copilot",                    // AI コード補完
+//         "github.copilot-chat",
+//         "ms-azuretools.vscode-docker",       // Docker サポート
+//         "oderwat.indent-rainbow",            // インデント可視化
+//         "shardulm94.trailing-spaces",        // 末尾スペースの強調表示
+//         "shopify.ruby-lsp"                   // Ruby LSP サポート
+//       ]
+//     }
+//   },
+//   "remoteUser": "root",  // root ユーザーでアクセス
+//   "postCreateCommand": "bundle install"
+// }

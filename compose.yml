@@ -1,0 +1,25 @@
+services:
+  #dbコンテナ
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: my_phr
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+  #webコンテナ
+  web:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    depends_on:
+      - db
+    environment:
+      DATABASE_PASSWORD: my_phr
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/my_phr
+volumes:
+  db-data:
