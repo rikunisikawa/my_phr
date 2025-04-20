@@ -1,0 +1,42 @@
+<%= form_with(model: profile, class: "row g-3") do |form| %>
+  <% if profile.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= pluralize(profile.errors.count, "error") %> prohibited this profile from being saved:</h2>
+
+      <ul>
+        <% profile.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="col-md-6">
+    <%= form.label :user_id, class: "form-label" %>
+    <%= form.number_field :user_id, class: "form-control" %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :birth_date, class: "form-label" %>
+    <%= form.date_field :birth_date, class: "form-control" %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :height_cm, class: "form-label" %>
+    <%= form.text_field :height_cm, class: "form-control" %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :weight_kg, class: "form-label" %>
+    <%= form.text_field :weight_kg, class: "form-control" %>
+  </div>
+
+  <div class="col-12">
+    <%= form.label :custom_fields, class: "form-label" %>
+    <%= form.text_area :custom_fields, class: "form-control" %>
+  </div>
+
+  <div class="col-12">
+    <%= form.submit class: "btn btn-primary" %>
+  </div>
+<% end %>

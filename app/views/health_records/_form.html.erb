@@ -1,0 +1,52 @@
+<%= form_with(model: @health_record, class: "row g-3") do |form| %>
+  <div class="col-md-6">
+    <%= form.label :date, "日付", class: "form-label" %>
+    <%= form.text_field :date, class: "form-control", value: Time.current.strftime("%Y-%m-%d %H:%M"), readonly: true %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :mood, "気分", class: "form-label" %>
+    <%= form.range_field :mood, in: 0..100, class: "form-range form-control" %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :stress, "ストレス", class: "form-label" %>
+    <%= form.range_field :stress, in: 0..100, class: "form-range form-control" %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :fatigue, "疲労", class: "form-label" %>
+    <%= form.range_field :fatigue, in: 0..100, class: "form-range form-control" %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :sleep_duration, "睡眠時間", class: "form-label" %>
+    <%= form.number_field :sleep_duration, step: 0.5, class: "form-control" %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :sleep_quality, "睡眠の質", class: "form-label" %>
+    <%= form.range_field :sleep_quality, in: 0..100, class: "form-range form-control" %>
+  </div>
+
+  <div class="col-md-12">
+    <%= form.label :memo, "メモ", class: "form-label" %>
+    <%= form.text_area :memo, class: "form-control" %>
+  </div>
+
+  <% @custom_field_definitions.each do |field| %>
+    <div class="col-md-6">
+      <%= form.label "custom_fields[#{field.name}]", field.name, class: "form-label" %>
+      <% if field.field_type == "number" %>
+        <%= form.range_field "custom_fields[#{field.name}]", in: 0..100, class: "form-range form-control" %>
+      <% elsif field.field_type == "boolean" %>
+        <%= form.check_box "custom_fields[#{field.name}]", class: "form-check-input" %>
+        <%= form.label "custom_fields[#{field.name}]", "はい", class: "form-check-label" %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="col-12">
+    <%= form.submit @health_record.new_record? ? "作成" : "更新", class: "btn btn-primary btn-lg" %>
+  </div>
+<% end %>

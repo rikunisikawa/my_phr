@@ -12,4 +12,16 @@
  *
  *= require_tree .
  *= require_self
+ *= require custom_material
  */
+
+body {
+  margin: 0;
+}
+
+.container-fluid {
+  padding: 0;
+}
+
+@import "_material_overrides";
+@import 'custom_material';

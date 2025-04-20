@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  date: 2025-04-05
+  mood: 1
+  stress: 1
+  fatigue: 1
+  sleep_duration: 1
+  sleep_quality: 1
+  memo: MyText
+  custom_fields: 
+
+two:
+  user_id: 1
+  date: 2025-04-05
+  mood: 1
+  stress: 1
+  fatigue: 1
+  sleep_duration: 1
+  sleep_quality: 1
+  memo: MyText
+  custom_fields: 
