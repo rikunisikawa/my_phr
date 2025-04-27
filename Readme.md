@@ -73,3 +73,48 @@
 
 - このプロジェクトでは、Turbolinks ではなく Turbo を使用しています。
 - JavaScript は jsbundling-rails と importmap を使用して管理しています。
+
+## モデルの関係性
+
+以下にモデルの関係性を示します。
+
+* User:
+    * has_one Profile
+    * has_many HealthRecords
+* Profile:
+    * belongs_to User
+    * has_many HealthRecords
+* HealthRecord:
+    * belongs_to User
+    * belongs_to Profile
+
+## モデルの関係性
+
+```mermaid
+erDiagram
+    User {
+        int id
+        string email
+        string encrypted_password
+    }
+    Profile {
+        int id
+        int user_id
+        date birth_date
+        float height_cm
+        float weight_kg
+    }
+    HealthRecord {
+        int id
+        int user_id
+        datetime date
+        int mood
+        int stress
+    }
+
+    User ||--|| Profile : has_one
+    User ||--o{ HealthRecord : has_many
+    Profile ||--o{ HealthRecord : has_many
+    HealthRecord }|..|| User : belongs_to
+    HealthRecord }|..|| Profile : belongs_to
+```
