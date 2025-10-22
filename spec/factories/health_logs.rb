@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :health_log do
     association :user
-    logged_on { Date.current }
+    recorded_at { Time.zone.now }
     mood { 5 }
     stress_level { 4 }
     fatigue_level { 3 }

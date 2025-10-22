@@ -4,8 +4,8 @@
               local: true do |f| %>
   <div class="row g-3">
     <div class="col-md-4">
-      <%= f.label :logged_on, "記録日", class: "form-label" %>
-      <%= f.date_field :logged_on, class: "form-control" %>
+      <%= f.label :recorded_at, "記録日時", class: "form-label" %>
+      <%= f.datetime_field :recorded_at, class: "form-control", step: 60 %>
     </div>
     <div class="col-md-8 d-flex gap-3 flex-wrap">
       <% score_options = (1..5).map { |value| [value, value] } %>
