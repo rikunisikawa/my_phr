@@ -9,25 +9,20 @@ class HealthRecordsController < ApplicationController
 
   def new
     @health_record = current_user.health_logs.build(logged_on: Date.current)
-    build_activity_slots
   end
 
-  def edit
-    build_activity_slots
-  end
+  def edit; end
 
   def create
     attributes = health_record_params
     @health_record = current_user.health_logs.build(attributes)
 
     if @json_error.present?
-      build_activity_slots
       flash.now[:alert] = @json_error
       render :new, status: :unprocessable_entity
     elsif @health_record.save
       redirect_to health_records_path, notice: "健康ログを登録しました。"
     else
-      build_activity_slots
       flash.now[:alert] = "入力内容を確認してください。"
       render :new, status: :unprocessable_entity
     end
@@ -37,14 +32,12 @@ class HealthRecordsController < ApplicationController
     attributes = health_record_params
 
     if @json_error.present?
-      build_activity_slots
       assign_without_custom_fields(@health_record, attributes)
       flash.now[:alert] = @json_error
       render :edit, status: :unprocessable_entity
     elsif @health_record.update(attributes)
       redirect_to health_record_path(@health_record), notice: "健康ログを更新しました。"
     else
-      build_activity_slots
       flash.now[:alert] = "入力内容を確認してください。"
       render :edit, status: :unprocessable_entity
     end
@@ -59,11 +52,6 @@ class HealthRecordsController < ApplicationController
 
   def set_health_record
     @health_record = current_user.health_logs.includes(:activity_logs).find(params[:id])
-  end
-
-  def build_activity_slots
-    remaining = [0, 3 - @health_record.activity_logs.size].max
-    remaining.times { @health_record.activity_logs.build }
   end
 
   def health_record_params

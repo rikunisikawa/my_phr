@@ -36,12 +36,20 @@
     <div class="form-text">例: {"blood_pressure":120}</div>
   </div>
 
-  <div class="mt-4">
-    <h3 class="h6">運動記録</h3>
-    <p class="small text-muted">最大3件まで入力できます。不要な行は削除してください。</p>
-    <div class="d-grid gap-3">
+  <div class="mt-4" data-activity-logs-container>
+    <div class="d-flex align-items-center justify-content-between">
+      <h3 class="h6 mb-0">運動記録</h3>
+      <button type="button" class="btn btn-outline-primary btn-sm" data-activity-logs-add-button>運動記録を追加</button>
+    </div>
+    <p class="small text-muted mt-2 mb-0">必要な分だけ追加してください。不要な行は削除できます。</p>
+    <div class="d-grid gap-3 mt-3" data-activity-logs-list>
       <%= f.fields_for :activity_logs do |activity_form| %>
-        <div class="card shadow-sm">
+        <% custom_fields_value = if activity_form.object.custom_fields.present?
+                                    JSON.pretty_generate(activity_form.object.custom_fields)
+                                  else
+                                    "{}"
+                                  end %>
+        <div class="card shadow-sm" data-activity-logs-item>
           <div class="card-body">
             <div class="row g-3">
               <div class="col-md-4">
@@ -60,7 +68,7 @@
 
             <div class="mt-3">
               <label class="form-label">運動カスタム項目(JSON)</label>
-              <%= text_area_tag "#{activity_form.object_name}[custom_fields_raw]", JSON.pretty_generate(activity_form.object.custom_fields || {}), class: "form-control", rows: 3 %>
+              <%= text_area_tag "#{activity_form.object_name}[custom_fields_raw]", custom_fields_value, class: "form-control", rows: 3 %>
             </div>
 
             <% if activity_form.object.persisted? %>
@@ -68,11 +76,47 @@
                 <%= activity_form.check_box :_destroy, class: "form-check-input", id: "#{activity_form.object_name.parameterize}_destroy" %>
                 <%= activity_form.label :_destroy, "この運動記録を削除", class: "form-check-label", for: "#{activity_form.object_name.parameterize}_destroy" %>
               </div>
+            <% else %>
+              <div class="mt-3">
+                <button type="button" class="btn btn-outline-danger btn-sm" data-activity-logs-remove>この運動記録を削除</button>
+              </div>
             <% end %>
           </div>
         </div>
       <% end %>
     </div>
+
+    <template data-activity-logs-template>
+      <%= f.fields_for :activity_logs, @health_record.activity_logs.build, child_index: "NEW_RECORD" do |activity_form| %>
+        <div class="card shadow-sm" data-activity-logs-item>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <%= activity_form.label :activity_type, "種目", class: "form-label" %>
+                <%= activity_form.text_field :activity_type, class: "form-control" %>
+              </div>
+              <div class="col-md-4">
+                <%= activity_form.label :duration_minutes, "時間(分)", class: "form-label" %>
+                <%= activity_form.number_field :duration_minutes, class: "form-control", min: 0 %>
+              </div>
+              <div class="col-md-4">
+                <%= activity_form.label :intensity, "強度", class: "form-label" %>
+                <%= activity_form.select :intensity, options_for_select([["低い", "low"], ["中程度", "moderate"], ["高い", "high"]], activity_form.object.intensity), { include_blank: "選択してください" }, class: "form-select" %>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <label class="form-label">運動カスタム項目(JSON)</label>
+              <%= text_area_tag "#{activity_form.object_name}[custom_fields_raw]", "{}", class: "form-control", rows: 3 %>
+            </div>
+
+            <div class="mt-3">
+              <button type="button" class="btn btn-outline-danger btn-sm" data-activity-logs-remove>この運動記録を削除</button>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </template>
   </div>
 
   <div class="mt-4 d-flex gap-2">
