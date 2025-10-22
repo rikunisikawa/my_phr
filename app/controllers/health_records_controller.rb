@@ -3,19 +3,17 @@ class HealthRecordsController < ApplicationController
   before_action :set_custom_field_definitions, only: %i[new create edit update show]
 
   def index
-    @health_records = current_user.health_logs.includes(:activity_logs).order(logged_on: :desc)
+    @health_records = current_user.health_logs.includes(:activity_logs).order(recorded_at: :desc)
   end
 
   def show; end
 
   def new
-    @health_record = current_user.health_logs.build(logged_on: Date.current)
+    @health_record = current_user.health_logs.build(recorded_at: Time.zone.now)
     build_activity_slots
   end
 
-  def edit
-    build_activity_slots
-  end
+  def edit; end
 
   def create
     @health_record = current_user.health_logs.build(health_record_params)
@@ -23,7 +21,6 @@ class HealthRecordsController < ApplicationController
     if @health_record.save
       redirect_to health_records_path, notice: "健康ログを登録しました。"
     else
-      build_activity_slots
       flash.now[:alert] = "入力内容を確認してください。"
       render :new, status: :unprocessable_entity
     end
@@ -33,7 +30,6 @@ class HealthRecordsController < ApplicationController
     if @health_record.update(health_record_params)
       redirect_to health_record_path(@health_record), notice: "健康ログを更新しました。"
     else
-      build_activity_slots
       flash.now[:alert] = "入力内容を確認してください。"
       render :edit, status: :unprocessable_entity
     end
@@ -50,14 +46,9 @@ class HealthRecordsController < ApplicationController
     @health_record = current_user.health_logs.includes(:activity_logs).find(params[:id])
   end
 
-  def build_activity_slots
-    remaining = [0, 3 - @health_record.activity_logs.size].max
-    remaining.times { @health_record.activity_logs.build }
-  end
-
   def health_record_params
     permitted = params.require(:health_log).permit(
-      :logged_on,
+      :recorded_at,
       :mood,
       :stress_level,
       :fatigue_level,

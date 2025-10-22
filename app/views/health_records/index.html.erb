@@ -15,7 +15,7 @@
     <table class="table table-striped align-middle mb-0">
       <thead class="table-light">
         <tr>
-          <th>日付</th>
+          <th>日時</th>
           <th>気分</th>
           <th>ストレス</th>
           <th>疲労感</th>
@@ -26,7 +26,7 @@
       <tbody>
         <% @health_records.each do |record| %>
           <tr>
-            <td><%= record.logged_on %></td>
+            <td><%= record.recorded_at ? l(record.recorded_at, format: "%Y-%m-%d %H:%M") : "-" %></td>
             <td><%= record.mood || "-" %></td>
             <td><%= record.stress_level || "-" %></td>
             <td><%= record.fatigue_level || "-" %></td>
