@@ -1,2 +1,0 @@
-class HealthRecord < ApplicationRecord
-end

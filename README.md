@@ -76,19 +76,22 @@
 
 ## モデルの関係性
 
-以下にモデルの関係性を示します。
+以下に最新のデータモデルの関係性を示します。
 
-* User:
+* User
     * has_one Profile
-    * has_many HealthRecords
-* Profile:
+    * has_many HealthLogs
+    * has_many ActivityLogs (through HealthLogs)
+    * has_many CustomFields
+* Profile
     * belongs_to User
-    * has_many HealthRecords
-* HealthRecord:
+* HealthLog
     * belongs_to User
-    * belongs_to Profile
-
-## モデルの関係性
+    * has_many ActivityLogs
+* ActivityLog
+    * belongs_to HealthLog
+* CustomField
+    * belongs_to User
 
 ```mermaid
 erDiagram
@@ -100,21 +103,39 @@ erDiagram
     Profile {
         int id
         int user_id
-        date birth_date
-        float height_cm
-        float weight_kg
+        int age
+        decimal height_cm
+        decimal weight_kg
     }
-    HealthRecord {
+    HealthLog {
         int id
         int user_id
-        datetime date
+        date logged_on
         int mood
-        int stress
+        int stress_level
+        int fatigue_level
+    }
+    ActivityLog {
+        int id
+        int health_log_id
+        string activity_type
+        int duration_minutes
+        string intensity
+    }
+    CustomField {
+        int id
+        int user_id
+        string name
+        string field_type
+        string category
     }
 
     User ||--|| Profile : has_one
-    User ||--o{ HealthRecord : has_many
-    Profile ||--o{ HealthRecord : has_many
-    HealthRecord }|..|| User : belongs_to
-    HealthRecord }|..|| Profile : belongs_to
+    User ||--o{ HealthLog : has_many
+    HealthLog ||--o{ ActivityLog : has_many
+    User ||--o{ CustomField : has_many
+    ActivityLog }|..|| HealthLog : belongs_to
+    HealthLog }|..|| User : belongs_to
+    Profile }|..|| User : belongs_to
+    CustomField }|..|| User : belongs_to
 ```
