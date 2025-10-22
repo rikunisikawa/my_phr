@@ -1,141 +1,65 @@
-# スタイルガイド
+# My PHR
 
-このドキュメントでは、BootstrapとMaterial Designを組み合わせたUIのスタイルガイドについて説明します。
+個人の健康記録を管理する Rails アプリケーションです。プロフィール・健康ログ・運動記録・カスタム項目を登録し、日次/週次/月次サマリーで振り返りができます。UI は Bootstrap と Material Design のスタイルガイドに沿って構築しています。
 
-## カラー
+## セットアップ
 
-- Primary color: #3F51B5 (Indigo系)
-- Secondary color: #03DAC6 (Teal系)
-- Background color: #FFFFFF
-- Surface color: #FFFFFF
-- Error color: #B00020
+### 1. 依存関係のインストール
 
-## Elevation (影)
+Docker を利用する場合は以下でイメージを構築します。
 
-- Material DesignのElevationを意識し、コンポーネントに影を付けます。
-
-## 角丸
-
-- シャープさのある角丸を使用します。Bootstrapの`.rounded-*`を併用し、MD風の形状にします。
-
-## コンポーネント
-
-### ナビゲーションバー（Navbar）
-
-- Bootstrapの`navbar`コンポーネントを利用します。
-- 色はprimaryカラーを使用します。
-- 高さはデフォルトのまま、または少し広めに取ります。
-- 影（`box-shadow`）を付与します。
-- ロゴやタイトルを左、メニューボタン（ハンバーガー）を右に配置します（モバイル最適化）。
-
-### カードレイアウト（Card）
-
-- Bootstrapの`card`コンポーネントを利用します。
-- Material DesignのElevationを意識し、`.shadow-sm`や`.shadow-lg`を適宜利用します。
-- 角丸はデフォルトか、`.rounded-3`などでMaterial Designに近づけます。
-
-### ボタン（Button）
-
-- Bootstrapの`btn`コンポーネントを利用します。
-- Primaryボタン：Material Designの「コンテインドボタン」風に、`btn-primary`をベースに`btn-lg`などで視認性を向上させます。
-- Secondaryボタン：Material Designの「アウトラインボタン」を参考に、`btn-outline-secondary`を使用します。
-- クリック時にリップル効果を出す場合は、追加のJSで演出します。
-
-### フォーム（Form）
-
-- Bootstrapの`form`とForm controlsを利用します。
-- ラベル上部配置（Material Designに多いスタイル）にします。
-- エラーメッセージやバリデーション時は、赤字テキスト + アイコン表示でユーザにわかりやすくします。
-- フォーカス時にMaterial Designっぽい濃いめのボーダー色か影を付与します。
-
-### モーダル（Modal）
-
-- Bootstrapの`modal`コンポーネントを活用します。
-- Material Designのダイアログに倣い、角丸 + 適度な影を追加します。
-- テキストは中央寄せまたは左揃えにし、適切な余白（24px前後）を確保します。
-
-## レイアウト & グリッド
-
-- Bootstrapのgrid system（`.row`, `.col-*`）を使用し、レスポンシブ対応します。
-- 余白（margin/padding）はMaterial Designガイドライン（8dp刻みなど）を意識し、`.mb-3`や`.p-3`などを適宜付与します。
-
-## レスポンシブ/ブレークポイント
-
-- Bootstrapの標準ブレークポイント(xs,sm,md,lg,xl)を利用します。
-- 主要画面のレイアウトをモバイルファーストで設計し、`.col-md-*`などで段組みを切り替えます。
-
-## アイコン
-
-- Material IconsやFont Awesomeなど、好みに応じて使用します。
-- Material Design準拠ならMaterial Symbolsが最適です。
-
-## JavaScript
-
-- このプロジェクトでは、Turbolinks ではなく Turbo を使用しています。
-- JavaScript は jsbundling-rails と importmap を使用して管理しています。
-
-## モデルの関係性
-
-以下に最新のデータモデルの関係性を示します。
-
-* User
-    * has_one Profile
-    * has_many HealthLogs
-    * has_many ActivityLogs (through HealthLogs)
-    * has_many CustomFields
-* Profile
-    * belongs_to User
-* HealthLog
-    * belongs_to User
-    * has_many ActivityLogs
-* ActivityLog
-    * belongs_to HealthLog
-* CustomField
-    * belongs_to User
-
-```mermaid
-erDiagram
-    User {
-        int id
-        string email
-        string encrypted_password
-    }
-    Profile {
-        int id
-        int user_id
-        int age
-        decimal height_cm
-        decimal weight_kg
-    }
-    HealthLog {
-        int id
-        int user_id
-        date logged_on
-        int mood
-        int stress_level
-        int fatigue_level
-    }
-    ActivityLog {
-        int id
-        int health_log_id
-        string activity_type
-        int duration_minutes
-        string intensity
-    }
-    CustomField {
-        int id
-        int user_id
-        string name
-        string field_type
-        string category
-    }
-
-    User ||--|| Profile : has_one
-    User ||--o{ HealthLog : has_many
-    HealthLog ||--o{ ActivityLog : has_many
-    User ||--o{ CustomField : has_many
-    ActivityLog }|..|| HealthLog : belongs_to
-    HealthLog }|..|| User : belongs_to
-    Profile }|..|| User : belongs_to
-    CustomField }|..|| User : belongs_to
+```bash
+docker compose build
 ```
+
+ローカルで実行する場合は Ruby 3.2.3 と Bundler を用意し、次のコマンドを実行します。
+
+```bash
+bundle install
+bin/rails db:setup
+```
+
+### 2. アプリの起動
+
+```bash
+docker compose up
+# もしくは
+bin/rails server
+```
+
+ブラウザで `http://localhost:3000` を開くとダッシュボードが表示されます。
+
+### 3. テストの実行
+
+```bash
+docker compose run --rm web bundle exec rspec
+# または
+bundle exec rspec
+```
+
+## 主な機能
+
+- **ダッシュボード**: 最新の健康ログと週次サマリーをカード形式で表示。
+- **基本情報管理**: プロフィールの編集とカスタム項目(JSON)の登録。
+- **健康ログ入力**: 日付、スコア(1〜5)、メモ、運動記録(最大3件)を登録/編集/削除。
+- **サマリー閲覧**: 日次・週次・月次を切り替えて平均指標や活動内訳を確認。
+- **カスタム項目 API**: profile/health/activity の各カテゴリで選択肢や数値項目を定義可能。
+
+## API エンドポイント
+
+| メソッド | パス | 説明 |
+| --- | --- | --- |
+| GET | /api/v1/profile | プロフィール取得 |
+| POST/PUT | /api/v1/profile | プロフィール作成・更新 |
+| GET/POST/PATCH/DELETE | /api/v1/custom_fields | カスタム項目 CRUD |
+| GET | /api/v1/health_logs | 日付範囲で健康ログ一覧 |
+| POST/PUT/DELETE | /api/v1/health_logs | 健康ログ CRUD（運動記録をネスト） |
+| GET | /api/v1/summaries?period=daily\|weekly\|monthly | サマリー取得 |
+
+詳細な UI スタイルガイドは `design/Readme.md` を参照してください。
+
+## 開発メモ
+
+- モデル間の関連: User ⇔ Profile/HealthLog/CustomField、HealthLog ⇔ ActivityLog。
+- サマリー集計は `SummaryCalculator` サービスで実装し、数値型カスタム項目も集計対象に含めています。
+- HTML 画面は `app/views` 配下のダッシュボード・プロフィール・健康ログ・サマリーで構成されています。

@@ -17,4 +17,9 @@ RSpec.describe ActivityLog, type: :model do
     activity = build(:activity_log, health_log: health_log, custom_fields: "invalid")
     expect(activity).not_to be_valid
   end
+
+  it "requires duration to be a positive integer when present" do
+    activity = build(:activity_log, health_log: health_log, duration_minutes: 0)
+    expect(activity).not_to be_valid
+  end
 end

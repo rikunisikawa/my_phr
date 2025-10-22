@@ -1,6 +1,12 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  resource :profile, only: %i[show edit update]
+  resources :health_records
+  get "summaries", to: "summaries#index"
+
+  root "home#index"
+
   namespace :api do
     namespace :v1 do
       resource :profile, only: %i[show create update], controller: :profiles

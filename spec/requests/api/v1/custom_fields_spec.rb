@@ -1,51 +1,56 @@
 require "rails_helper"
 
-RSpec.describe "CustomFields API", type: :request do
+RSpec.describe "Api::V1::CustomFields", type: :request do
   let(:user) { create(:user) }
 
   before { sign_in user }
 
   describe "GET /api/v1/custom_fields" do
-    it "returns fields for the user" do
-      create_list(:custom_field, 2, user: user)
+    it "lists fields for the current user" do
+      create(:custom_field, user: user, name: "blood_pressure")
 
-      get api_v1_custom_fields_path
+      get "/api/v1/custom_fields"
 
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body).size).to eq(2)
+      expect(response_json.first).to include("name" => "blood_pressure")
     end
   end
 
   describe "POST /api/v1/custom_fields" do
     it "creates a custom field" do
-      params = { custom_field: { name: "blood_pressure", field_type: "number", category: "health" } }
-
-      post api_v1_custom_fields_path, params: params
+      post "/api/v1/custom_fields", params: {
+        custom_field: {
+          name: "Intensity",
+          field_type: "select",
+          category: "activity",
+          options: %w[low medium high]
+        }
+      }
 
       expect(response).to have_http_status(:created)
-      expect(user.reload.custom_fields.count).to eq(1)
+      expect(user.custom_fields.count).to eq(1)
     end
   end
 
   describe "PATCH /api/v1/custom_fields/:id" do
-    it "updates the custom field" do
-      field = create(:custom_field, user: user, name: "Mood", field_type: "text", category: "health")
+    it "updates a custom field" do
+      field = create(:custom_field, user: user, name: "Sleep", field_type: "number", category: "health")
 
-      patch api_v1_custom_field_path(field), params: { custom_field: { name: "Updated Mood" } }
+      patch "/api/v1/custom_fields/#{field.id}", params: { custom_field: { name: "Sleep Time" } }
 
       expect(response).to have_http_status(:ok)
-      expect(field.reload.name).to eq("Updated Mood")
+      expect(field.reload.name).to eq("Sleep Time")
     end
   end
 
   describe "DELETE /api/v1/custom_fields/:id" do
-    it "removes the custom field" do
+    it "removes a custom field" do
       field = create(:custom_field, user: user)
 
-      delete api_v1_custom_field_path(field)
+      delete "/api/v1/custom_fields/#{field.id}"
 
       expect(response).to have_http_status(:no_content)
-      expect(user.custom_fields).to be_empty
+      expect { field.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end

@@ -1,0 +1,17 @@
+<div class="card shadow-sm">
+  <div class="card-header">
+    <h2 class="h5 mb-0">健康ログを編集</h2>
+  </div>
+  <div class="card-body">
+    <% if @health_record.errors.any? %>
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          <% @health_record.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <%= render "form" %>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+<%= form_with model: @profile, url: profile_path, method: :patch, local: true do |f| %>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <%= f.label :age, "年齢", class: "form-label" %>
+      <%= f.number_field :age, class: "form-control", min: 0, max: 120 %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :height_cm, "身長(cm)", class: "form-label" %>
+      <%= f.number_field :height_cm, class: "form-control", step: 0.1, min: 50, max: 250 %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :weight_kg, "体重(kg)", class: "form-label" %>
+      <%= f.number_field :weight_kg, class: "form-control", step: 0.1, min: 10, max: 300 %>
+    </div>
+  </div>
+
+  <% custom_fields_raw = params.dig(:profile, :custom_fields_json) %>
+  <div class="mt-4">
+    <%= f.label :custom_fields, "カスタム項目(JSON)", class: "form-label" %>
+    <%= text_area_tag "profile[custom_fields_json]", custom_fields_raw.presence || JSON.pretty_generate(@profile.custom_fields || {}), class: "form-control", rows: 4 %>
+    <div class="form-text">例: {"blood_type":"A","goal_steps":8000}</div>
+  </div>
+
+  <div class="mt-4 d-flex gap-2">
+    <%= f.submit "保存する", class: "btn btn-primary" %>
+    <%= link_to "キャンセル", profile_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

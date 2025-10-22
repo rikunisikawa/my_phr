@@ -1,0 +1,82 @@
+<%= form_with model: @health_record,
+              url: @health_record.persisted? ? health_record_path(@health_record) : health_records_path,
+              method: @health_record.persisted? ? :patch : :post,
+              local: true do |f| %>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <%= f.label :logged_on, "記録日", class: "form-label" %>
+      <%= f.date_field :logged_on, class: "form-control" %>
+    </div>
+    <div class="col-md-8 d-flex gap-3 flex-wrap">
+      <% score_options = (1..5).map { |value| [value, value] } %>
+      <div class="flex-grow-1">
+        <%= f.label :mood, "気分(1-5)", class: "form-label" %>
+        <%= f.select :mood, options_for_select(score_options, @health_record.mood), { include_blank: "選択してください" }, class: "form-select" %>
+      </div>
+      <div class="flex-grow-1">
+        <%= f.label :stress_level, "ストレス(1-5)", class: "form-label" %>
+        <%= f.select :stress_level, options_for_select(score_options, @health_record.stress_level), { include_blank: "選択してください" }, class: "form-select" %>
+      </div>
+      <div class="flex-grow-1">
+        <%= f.label :fatigue_level, "疲労感(1-5)", class: "form-label" %>
+        <%= f.select :fatigue_level, options_for_select(score_options, @health_record.fatigue_level), { include_blank: "選択してください" }, class: "form-select" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= f.label :notes, "メモ", class: "form-label" %>
+    <%= f.text_area :notes, class: "form-control", rows: 3 %>
+  </div>
+
+  <% custom_fields_raw = params.dig(:health_log, :custom_fields_raw) %>
+  <div class="mt-3">
+    <%= f.label :custom_fields, "健康カスタム項目(JSON)", class: "form-label" %>
+    <%= text_area_tag "health_log[custom_fields_raw]", custom_fields_raw.presence || JSON.pretty_generate(@health_record.custom_fields || {}), class: "form-control", rows: 4 %>
+    <div class="form-text">例: {"blood_pressure":120}</div>
+  </div>
+
+  <div class="mt-4">
+    <h3 class="h6">運動記録</h3>
+    <p class="small text-muted">最大3件まで入力できます。不要な行は削除してください。</p>
+    <div class="d-grid gap-3">
+      <%= f.fields_for :activity_logs do |activity_form| %>
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <%= activity_form.label :activity_type, "種目", class: "form-label" %>
+                <%= activity_form.text_field :activity_type, class: "form-control" %>
+              </div>
+              <div class="col-md-4">
+                <%= activity_form.label :duration_minutes, "時間(分)", class: "form-label" %>
+                <%= activity_form.number_field :duration_minutes, class: "form-control", min: 0 %>
+              </div>
+              <div class="col-md-4">
+                <%= activity_form.label :intensity, "強度", class: "form-label" %>
+                <%= activity_form.select :intensity, options_for_select([["低い", "low"], ["中程度", "moderate"], ["高い", "high"]], activity_form.object.intensity), { include_blank: "選択してください" }, class: "form-select" %>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <label class="form-label">運動カスタム項目(JSON)</label>
+              <%= text_area_tag "#{activity_form.object_name}[custom_fields_raw]", JSON.pretty_generate(activity_form.object.custom_fields || {}), class: "form-control", rows: 3 %>
+            </div>
+
+            <% if activity_form.object.persisted? %>
+              <div class="form-check mt-3">
+                <%= activity_form.check_box :_destroy, class: "form-check-input", id: "#{activity_form.object_name.parameterize}_destroy" %>
+                <%= activity_form.label :_destroy, "この運動記録を削除", class: "form-check-label", for: "#{activity_form.object_name.parameterize}_destroy" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-4 d-flex gap-2">
+    <%= f.submit "保存する", class: "btn btn-primary" %>
+    <%= link_to "一覧に戻る", health_records_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

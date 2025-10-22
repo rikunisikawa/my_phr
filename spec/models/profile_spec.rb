@@ -16,6 +16,11 @@ RSpec.describe Profile, type: :model do
     expect(profile).not_to be_valid
   end
 
+  it "rejects out of range height" do
+    profile.height_cm = 20
+    expect(profile).not_to be_valid
+  end
+
   it "rejects non-hash custom_fields" do
     profile.custom_fields = [1, 2, 3]
     expect(profile).not_to be_valid

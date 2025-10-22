@@ -1,25 +1,25 @@
 require "rails_helper"
 
-RSpec.describe "Summaries API", type: :request do
+RSpec.describe "Api::V1::Summaries", type: :request do
   let(:user) { create(:user) }
 
   before do
     sign_in user
-    create(:custom_field, :number_health, user: user, name: "blood_pressure")
-    create(:health_log, :with_activity, user: user, logged_on: Date.current, mood: 6, stress_level: 4, fatigue_level: 3)
+    health_log = create(:health_log, :with_activity, user: user, logged_on: Date.current, mood: 4, stress_level: 3, fatigue_level: 2)
+    health_log.activity_logs.first.update!(duration_minutes: 45)
   end
 
   it "returns summary data" do
-    get api_v1_summaries_path, params: { period: "daily" }
+    get "/api/v1/summaries", params: { period: "daily" }
 
     expect(response).to have_http_status(:ok)
-    body = JSON.parse(response.body)
-    expect(body["buckets"]).not_to be_empty
+    expect(response_json).to include("period" => "daily")
   end
 
-  it "returns error for unsupported period" do
-    get api_v1_summaries_path, params: { period: "invalid" }
+  it "returns error for invalid period" do
+    get "/api/v1/summaries", params: { period: "yearly" }
 
     expect(response).to have_http_status(:unprocessable_entity)
+    expect(response_json["errors"]).to be_present
   end
 end

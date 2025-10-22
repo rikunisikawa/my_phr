@@ -18,6 +18,11 @@ RSpec.describe HealthLog, type: :model do
     expect(log).not_to be_valid
   end
 
+  it "requires scores to be within 1 to 5" do
+    log = build(:health_log, user: user, mood: 6)
+    expect(log).not_to be_valid
+  end
+
   it "filters by date range" do
     older = create(:health_log, user: user, logged_on: Date.current - 5.days)
     newer = create(:health_log, user: user, logged_on: Date.current)

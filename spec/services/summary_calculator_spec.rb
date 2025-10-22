@@ -3,10 +3,10 @@ require "rails_helper"
 RSpec.describe SummaryCalculator do
   let(:user) { create(:user) }
   let!(:health_log) do
-    create(:health_log, :with_activity, user: user, logged_on: Date.current, mood: 6, stress_level: 4, fatigue_level: 3)
+    create(:health_log, :with_activity, user: user, logged_on: Date.current, mood: 5, stress_level: 4, fatigue_level: 3)
   end
   let!(:health_log_previous_week) do
-    create(:health_log, :with_activity, user: user, logged_on: Date.current - 7.days, mood: 4, stress_level: 5, fatigue_level: 6)
+    create(:health_log, :with_activity, user: user, logged_on: Date.current - 7.days, mood: 3, stress_level: 5, fatigue_level: 4)
   end
   let!(:health_field) { create(:custom_field, :number_health, user: user, name: "blood_pressure") }
   let!(:activity_field) { create(:custom_field, :number_activity, user: user, name: "calories") }

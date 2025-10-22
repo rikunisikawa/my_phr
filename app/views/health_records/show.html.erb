@@ -1,0 +1,86 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h4 mb-0"><%= @health_record.logged_on %> の記録</h2>
+  <div class="d-flex gap-2">
+    <%= link_to "編集", edit_health_record_path(@health_record), class: "btn btn-outline-secondary btn-sm" %>
+    <%= link_to "一覧に戻る", health_records_path, class: "btn btn-outline-primary btn-sm" %>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header">
+        <h3 class="h6 mb-0">状態</h3>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">気分</dt>
+          <dd class="col-sm-8"><%= @health_record.mood || "-" %></dd>
+          <dt class="col-sm-4">ストレス</dt>
+          <dd class="col-sm-8"><%= @health_record.stress_level || "-" %></dd>
+          <dt class="col-sm-4">疲労感</dt>
+          <dd class="col-sm-8"><%= @health_record.fatigue_level || "-" %></dd>
+          <dt class="col-sm-4">メモ</dt>
+          <dd class="col-sm-8"><%= simple_format(@health_record.notes || "-") %></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header">
+        <h3 class="h6 mb-0">健康カスタム項目</h3>
+      </div>
+      <div class="card-body">
+        <% if @health_record.custom_fields.present? %>
+          <ul class="list-group list-group-flush">
+            <% @health_record.custom_fields.each do |key, value| %>
+              <li class="list-group-item px-0 d-flex justify-content-between">
+                <span class="text-muted"><%= key %></span>
+                <span><%= value %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted mb-0">カスタム項目は設定されていません。</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm mt-3">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3 class="h6 mb-0">運動記録</h3>
+  </div>
+  <div class="card-body">
+    <% if @health_record.activity_logs.any? %>
+      <div class="list-group">
+        <% @health_record.activity_logs.each do |activity| %>
+          <div class="list-group-item">
+            <div class="d-flex justify-content-between">
+              <div>
+                <strong><%= activity.activity_type.presence || "未入力" %></strong>
+                <div class="text-muted small">
+                  強度: <%= activity.intensity || "-" %>
+                </div>
+              </div>
+              <span><%= activity.duration_minutes ? "#{activity.duration_minutes} 分" : "-" %></span>
+            </div>
+            <% if activity.custom_fields.present? %>
+              <ul class="list-inline small mt-2 mb-0">
+                <% activity.custom_fields.each do |key, value| %>
+                  <li class="list-inline-item badge text-bg-light">
+                    <%= key %>: <%= value %>
+                  </li>
+                <% end %>
+              </ul>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-muted mb-0">運動記録は登録されていません。</p>
+    <% end %>
+  </div>
+</div>

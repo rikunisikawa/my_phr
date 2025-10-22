@@ -1,0 +1,79 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h4 mb-0">サマリー</h2>
+</div>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <%= form_with url: summaries_path, method: :get, local: true, class: "row g-3 align-items-end" do |f| %>
+      <div class="col-sm-4">
+        <label class="form-label" for="period">期間</label>
+        <%= select_tag :period, options_for_select([["日次", "daily"], ["週次", "weekly"], ["月次", "monthly"]], @period), class: "form-select" %>
+      </div>
+      <div class="col-sm-3">
+        <label class="form-label" for="from">開始日</label>
+        <%= date_field_tag :from, params[:from], class: "form-control" %>
+      </div>
+      <div class="col-sm-3">
+        <label class="form-label" for="to">終了日</label>
+        <%= date_field_tag :to, params[:to], class: "form-control" %>
+      </div>
+      <div class="col-sm-2 text-sm-end">
+        <%= f.submit "再表示", class: "btn btn-primary w-100" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% if @summary.present? && @summary.buckets.any? %>
+  <% @summary.buckets.each do |bucket| %>
+    <div class="card shadow-sm mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="h6 mb-0"><%= bucket.label %></h3>
+        <span class="text-muted small"><%= bucket.from %> 〜 <%= bucket.to %></span>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <h4 class="h6">平均指標</h4>
+            <ul class="list-unstyled mb-0">
+              <li>気分: <strong><%= bucket.averages[:mood]&.round(1) || "-" %></strong></li>
+              <li>ストレス: <strong><%= bucket.averages[:stress_level]&.round(1) || "-" %></strong></li>
+              <li>疲労: <strong><%= bucket.averages[:fatigue_level]&.round(1) || "-" %></strong></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h4 class="h6">運動</h4>
+            <p class="mb-1">合計時間: <strong><%= bucket.total_activity_duration %> 分</strong></p>
+            <% if bucket.activities_breakdown.present? %>
+              <ul class="list-unstyled mb-0 small">
+                <% bucket.activities_breakdown.each do |type, minutes| %>
+                  <li><%= type %>: <%= minutes %> 分</li>
+                <% end %>
+              </ul>
+            <% else %>
+              <p class="text-muted small mb-0">運動記録はありません。</p>
+            <% end %>
+          </div>
+          <div class="col-md-4">
+            <h4 class="h6">カスタム項目</h4>
+            <% if bucket.custom_fields.present? && (bucket.custom_fields[:health].present? || bucket.custom_fields[:activity].present?) %>
+              <% [:health, :activity].each do |category| %>
+                <% next if bucket.custom_fields[category].blank? %>
+                <p class="fw-semibold mb-1"><%= category == :health ? "健康" : "運動" %></p>
+                <ul class="list-unstyled small">
+                  <% bucket.custom_fields[category].each do |name, values| %>
+                    <li><%= name %>: 合計 <%= values[:total].round(1) %> / 平均 <%= values[:average]&.round(1) || "-" %></li>
+                  <% end %>
+                </ul>
+              <% end %>
+            <% else %>
+              <p class="text-muted small mb-0">集計対象のカスタム項目はありません。</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="alert alert-info">サマリーを表示できるデータが見つかりませんでした。</div>
+<% end %>

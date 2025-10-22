@@ -1,42 +1,45 @@
 require "rails_helper"
 
-RSpec.describe "Profiles API", type: :request do
+RSpec.describe "Api::V1::Profiles", type: :request do
   let(:user) { create(:user) }
 
-  before do
-    sign_in user
-  end
+  before { sign_in user }
 
   describe "GET /api/v1/profile" do
-    it "returns the user's profile" do
-      create(:profile, user: user, age: 32)
+    it "returns the current profile" do
+      create(:profile, user: user, age: 30)
 
-      get api_v1_profile_path
+      get "/api/v1/profile"
 
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)["age"]).to eq(32)
+      expect(response_json).to include("age" => 30)
     end
   end
 
   describe "POST /api/v1/profile" do
     it "creates a profile" do
-      params = { profile: { age: 30, height_cm: 170, weight_kg: 65 } }
-
-      post api_v1_profile_path, params: params
+      post "/api/v1/profile", params: {
+        profile: {
+          age: 28,
+          height_cm: 172.5,
+          weight_kg: 68.2,
+          custom_fields: { blood_type: "A" }
+        }
+      }
 
       expect(response).to have_http_status(:created)
-      expect(user.reload.profile.age).to eq(30)
+      expect(user.reload.profile).to have_attributes(age: 28, height_cm: 172.5, weight_kg: 68.2)
     end
   end
 
-  describe "PATCH /api/v1/profile" do
+  describe "PUT /api/v1/profile" do
     it "updates the profile" do
-      create(:profile, user: user, age: 30)
+      profile = create(:profile, user: user, age: 25)
 
-      patch api_v1_profile_path, params: { profile: { age: 31 } }
+      put "/api/v1/profile", params: { profile: { age: 26 } }
 
       expect(response).to have_http_status(:ok)
-      expect(user.reload.profile.age).to eq(31)
+      expect(profile.reload.age).to eq(26)
     end
   end
 end

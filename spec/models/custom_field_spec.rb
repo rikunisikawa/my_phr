@@ -27,4 +27,9 @@ RSpec.describe CustomField, type: :model do
     field = build(:custom_field, user: user, field_type: "select", options: ["A"])
     expect(field).to be_valid
   end
+
+  it "requires options for select fields" do
+    field = build(:custom_field, user: user, field_type: "select", options: [])
+    expect(field).not_to be_valid
+  end
 end
