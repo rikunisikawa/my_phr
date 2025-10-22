@@ -1,13 +1,14 @@
 Rails.application.routes.draw do
   devise_for :users
-  resources :profiles     # プロフィール
-  resources :health_records do
-    resources :exercise_logs, only: [:create, :update, :destroy]
-    collection do
-      get :summary  # /health_records/summary => summary表示
+
+  namespace :api do
+    namespace :v1 do
+      resource :profile, only: %i[show create update], controller: :profiles
+      resources :custom_fields
+      resources :health_logs do
+        resources :activity_logs, only: %i[create update destroy]
+      end
+      get "summaries", to: "summaries#show"
     end
   end
-
-  # rootパスを健康記録の一覧などへ設定
-  root "health_records#index"
 end
