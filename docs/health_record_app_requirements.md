@@ -12,7 +12,7 @@
 
 ## 3. 用語定義
 - **基本情報**: ユーザーのプロフィール情報（年齢・身長・体重・カスタム項目など）。
-- **健康ログ**: 日々の状態や活動に関する記録。
+- **健康ログ**: その時点の状態や活動に関する記録。各レコードは分単位の記録日時 (`recorded_at`) を保持する。
 - **カスタム項目**: ユーザーが任意に追加できる項目。各カテゴリで自由入力フィールドを想定。
 - **サマリー**: 日次/週次/月次単位で集計・可視化された情報。
 
@@ -29,10 +29,10 @@
 - [FR-3] 基本情報はユーザープロフィール画面で確認できる。
 
 ### 5.2 健康状態記録
-- [FR-4] ユーザーは日付ごとに健康状態（気分、ストレス、疲労感など）を入力・保存できる。
+- [FR-4] ユーザーは任意の記録日時（分単位）で健康状態（気分、ストレス、疲労感など）を入力・保存できる。
 - [FR-5] ユーザーは運動内容（ウォーキング、ランニング、筋トレなど）を入力・保存できる。
 - [FR-6] ユーザーは健康状態・運動内容に任意のカスタム項目を追加できる。
-- [FR-7] 記録は時系列で閲覧でき、編集・削除が可能。
+- [FR-7] 記録は記録日時順で閲覧でき、編集・削除が可能。
 
 ### 5.3 サマリー表示
 - [FR-8] 日次サマリー: 当日の基本情報サマリーと健康ログを集約して表示する。
@@ -56,13 +56,14 @@
 ### 7.1 データモデル（概略）
 - **User**: 既存の認証システムを利用（ID, name, email）。
 - **Profile**: user_id, age, height, weight, custom_fields(json)。
-- **HealthLog**: id, user_id, date, mood, stress_level, fatigue_level, notes, custom_fields(json)。
+- **HealthLog**: id, user_id, recorded_at(datetime), mood, stress_level, fatigue_level, notes, custom_fields(json)。
 - **ActivityLog**: id, health_log_id, activity_type, duration, intensity, custom_fields(json)。
 - **SummaryCache** (任意): user_id, period_type(日/週/月), period_start, metrics(json), generated_at。
 
 ### 7.2 バリデーション
 - 年齢・身長・体重は数値入力。上限/下限を定義（例: 年齢 0-120, 身長 50-250cm, 体重 10-300kg）。
 - 気分・ストレス・疲労感は 1-5 スケールで記録。
+- 記録日時 (`recorded_at`) はユーザーのタイムゾーンで扱い、分単位まで入力する。
 - カスタム項目は名称必須、最大 30 文字。
 
 ## 8. 画面要件
@@ -73,7 +74,7 @@
    - プロフィール項目の一覧と編集フォーム。
    - カスタム項目の追加・並び替え。
 3. **健康ログ入力画面**
-   - 日付選択、状態入力フォーム、運動内容入力フォーム。
+   - 日時選択（分単位）、状態入力フォーム、運動内容入力フォーム。
    - カスタム項目を含む入力コンポーネント。
 4. **サマリー画面**
    - 日次/週次/月次をタブ切り替え表示。
@@ -81,12 +82,12 @@
 
 ## 9. API 要件（例）
 - `GET /profile`、`PUT /profile`
-- `GET /health_logs?from=&to=`、`POST /health_logs`、`PUT /health_logs/:id`、`DELETE /health_logs/:id`
+- `GET /health_logs?from=&to=`、`POST /health_logs`、`PUT /health_logs/:id`、`DELETE /health_logs/:id`（`from`/`to` は ISO8601 の日時文字列を想定）
 - `GET /summaries?period=daily|weekly|monthly`
 - `GET/POST/DELETE /custom_fields`
 
 ## 10. サマリー集計ロジック（高レベル）
-- 日次: 当日の健康ログをまとめ、気分などのスコア平均、運動時間合計を計算。
+- 日次: 当日の健康ログをまとめ、記録日時に基づいて気分などのスコア平均、運動時間合計を計算。
 - 週次: 対象週の日次集計を平均または合計し、週間トレンドを作成。
 - 月次: 対象月の週次もしくは日次データを集約。主要指標（平均気分、総運動時間など）を算出。
 - カスタム項目は数値型の場合のみ集計対象に含め、その他はタグやメモとして扱う。

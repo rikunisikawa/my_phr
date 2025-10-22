@@ -27,7 +27,7 @@ class SummaryCalculator
 
   def call
     logs = @user.health_logs.between(@start_date, @end_date).includes(:activity_logs)
-    grouped = logs.group_by { |log| bucket_start_for(log.logged_on) }
+    grouped = logs.group_by { |log| bucket_start_for(log.recorded_at.to_date) }
 
     buckets = grouped.sort_by { |start_date, _| start_date }.map do |bucket_start, bucket_logs|
       build_bucket(bucket_start, bucket_logs)
