@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_05_03_045617) do
+ActiveRecord::Schema[7.0].define(version: 2025_05_08_000000) do
   create_table "activity_logs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "health_log_id", null: false
     t.string "activity_type"
@@ -54,7 +54,6 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_03_045617) do
 
   create_table "health_logs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.date "logged_on", null: false
     t.integer "mood"
     t.integer "stress_level"
     t.integer "fatigue_level"
@@ -62,7 +61,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_03_045617) do
     t.json "custom_fields"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id", "logged_on"], name: "index_health_logs_on_user_id_and_logged_on"
+    t.datetime "recorded_at", null: false
+    t.index ["user_id", "recorded_at"], name: "index_health_logs_on_user_id_and_recorded_at"
   end
 
   create_table "health_records", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

@@ -4,7 +4,7 @@ module Api
       before_action :set_health_log, only: %i[show update destroy]
 
       def index
-        logs = current_user.health_logs.between(params[:from], params[:to]).order(logged_on: :desc)
+        logs = current_user.health_logs.between(params[:from], params[:to]).order(recorded_at: :desc)
         render json: logs.map { |log| serialize_health_log(log) }
       end
 
@@ -43,7 +43,7 @@ module Api
 
       def health_log_params
         params.require(:health_log).permit(
-          :logged_on,
+          :recorded_at,
           :mood,
           :stress_level,
           :fatigue_level,
@@ -62,7 +62,7 @@ module Api
 
       def serialize_health_log(log)
         log.as_json(
-          only: %i[id logged_on mood stress_level fatigue_level notes custom_fields],
+          only: %i[id recorded_at mood stress_level fatigue_level notes custom_fields],
           include: {
             activity_logs: {
               only: %i[id activity_type duration_minutes intensity custom_fields]

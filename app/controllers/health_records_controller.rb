@@ -2,13 +2,13 @@ class HealthRecordsController < ApplicationController
   before_action :set_health_record, only: %i[show edit update destroy]
 
   def index
-    @health_records = current_user.health_logs.includes(:activity_logs).order(logged_on: :desc)
+    @health_records = current_user.health_logs.includes(:activity_logs).order(recorded_at: :desc)
   end
 
   def show; end
 
   def new
-    @health_record = current_user.health_logs.build(logged_on: Date.current)
+    @health_record = current_user.health_logs.build(recorded_at: Time.zone.now)
     build_activity_slots
   end
 
@@ -69,7 +69,7 @@ class HealthRecordsController < ApplicationController
   def health_record_params
     @json_error = nil
     permitted = params.require(:health_log).permit(
-      :logged_on,
+      :recorded_at,
       :mood,
       :stress_level,
       :fatigue_level,

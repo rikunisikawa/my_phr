@@ -1,6 +1,6 @@
 # My PHR
 
-個人の健康記録を管理する Rails アプリケーションです。プロフィール・健康ログ・運動記録・カスタム項目を登録し、日次/週次/月次サマリーで振り返りができます。UI は Bootstrap と Material Design のスタイルガイドに沿って構築しています。
+個人の健康記録を管理する Rails アプリケーションです。プロフィール・健康ログ・運動記録・カスタム項目を登録し、日次/週次/月次サマリーで振り返りができます。健康ログは分単位の記録時刻で管理され、1 日の中での変化も追跡できます。UI は Bootstrap と Material Design のスタイルガイドに沿って構築しています。
 
 ## セットアップ
 
@@ -41,7 +41,7 @@ bundle exec rspec
 
 - **ダッシュボード**: 最新の健康ログと週次サマリーをカード形式で表示。
 - **基本情報管理**: プロフィールの編集とカスタム項目(JSON)の登録。
-- **健康ログ入力**: 日付、スコア(1〜5)、メモ、運動記録(最大3件)を登録/編集/削除。
+- **健康ログ入力**: 記録日時(分単位)、スコア(1〜5)、メモ、運動記録(最大3件)を登録/編集/削除。
 - **サマリー閲覧**: 日次・週次・月次を切り替えて平均指標や活動内訳を確認。
 - **カスタム項目 API**: profile/health/activity の各カテゴリで選択肢や数値項目を定義可能。
 
@@ -52,7 +52,7 @@ bundle exec rspec
 | GET | /api/v1/profile | プロフィール取得 |
 | POST/PUT | /api/v1/profile | プロフィール作成・更新 |
 | GET/POST/PATCH/DELETE | /api/v1/custom_fields | カスタム項目 CRUD |
-| GET | /api/v1/health_logs | 日付範囲で健康ログ一覧 |
+| GET | /api/v1/health_logs | 記録日時範囲で健康ログ一覧 |
 | POST/PUT/DELETE | /api/v1/health_logs | 健康ログ CRUD（運動記録をネスト） |
 | GET | /api/v1/summaries?period=daily\|weekly\|monthly | サマリー取得 |
 

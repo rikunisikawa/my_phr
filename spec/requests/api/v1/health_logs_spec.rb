@@ -7,10 +7,10 @@ RSpec.describe "Api::V1::HealthLogs", type: :request do
 
   describe "GET /api/v1/health_logs" do
     it "filters by date range" do
-      create(:health_log, user: user, logged_on: Date.current - 2.days)
-      recent = create(:health_log, user: user, logged_on: Date.current)
+      create(:health_log, user: user, recorded_at: 2.days.ago)
+      recent = create(:health_log, user: user, recorded_at: Time.zone.now.change(sec: 0))
 
-      get "/api/v1/health_logs", params: { from: Date.current - 1.day, to: Date.current }
+      get "/api/v1/health_logs", params: { from: 1.day.ago.iso8601, to: Time.zone.now.end_of_day.iso8601 }
 
       expect(response).to have_http_status(:ok)
       ids = response_json.map { |log| log["id"] }
@@ -22,7 +22,7 @@ RSpec.describe "Api::V1::HealthLogs", type: :request do
     it "creates a health log with activities" do
       post "/api/v1/health_logs", params: {
         health_log: {
-          logged_on: Date.current,
+          recorded_at: Time.zone.now.iso8601,
           mood: 3,
           stress_level: 2,
           fatigue_level: 4,
