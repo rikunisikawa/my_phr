@@ -16,12 +16,13 @@
     </dl>
 
     <h3 class="h6 mt-4">カスタム項目</h3>
-    <% if @profile.custom_fields.present? %>
+    <% display_fields = @profile_custom_fields.select { |field| custom_field_value_present?(field, @profile.custom_fields) } %>
+    <% if display_fields.any? %>
       <ul class="list-group list-group-flush">
-        <% @profile.custom_fields.each do |key, value| %>
+        <% display_fields.each do |field| %>
           <li class="list-group-item px-0 d-flex justify-content-between">
-            <span class="text-muted"><%= key %></span>
-            <span><%= value %></span>
+            <span class="text-muted"><%= field.name %></span>
+            <span><%= display_custom_field_value(field, @profile.custom_fields) %></span>
           </li>
         <% end %>
       </ul>

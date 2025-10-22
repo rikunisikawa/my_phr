@@ -1,0 +1,37 @@
+<% sanitized_prefix = form_prefix.to_s.gsub(/[^a-zA-Z0-9]+/, "_") %>
+<% boolean_type = ApplicationHelper::BOOLEAN_TYPE %>
+<div class="row g-3">
+  <% fields.each do |field| %>
+    <% input_name = "#{form_prefix}[custom_field_values][#{field.id}]" %>
+    <% input_id = "#{sanitized_prefix}_custom_field_#{field.id}" %>
+    <% value_map = values.is_a?(Hash) ? values : {} %>
+    <% current_value = value_map[field.name] %>
+    <div class="col-md-6">
+      <% case field.field_type %>
+      <% when "boolean" %>
+        <label class="form-label d-block"><%= field.name %></label>
+        <div class="form-check form-switch">
+          <%= hidden_field_tag input_name, "0" %>
+          <%= check_box_tag input_name, "1", boolean_type.cast(current_value), class: "form-check-input", id: input_id %>
+          <label class="form-check-label" for="<%= input_id %>">はい</label>
+        </div>
+      <% when "number" %>
+        <label class="form-label" for="<%= input_id %>"><%= field.name %></label>
+        <%= number_field_tag input_name, current_value, class: "form-control", id: input_id, step: "any" %>
+      <% when "select" %>
+        <label class="form-label" for="<%= input_id %>"><%= field.name %></label>
+        <%= select_tag input_name,
+                       options_for_select(field.options || [], current_value),
+                       include_blank: "選択してください",
+                       class: "form-select",
+                       id: input_id %>
+        <% if field.options.present? %>
+          <div class="form-text">選択肢: <%= field.options.join(" / ") %></div>
+        <% end %>
+      <% else %>
+        <label class="form-label" for="<%= input_id %>"><%= field.name %></label>
+        <%= text_field_tag input_name, current_value, class: "form-control", id: input_id %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
 
   resource :profile, only: %i[show edit update]
+  resources :custom_fields, only: %i[index create destroy]
   resources :health_records
   get "summaries", to: "summaries#index"
 

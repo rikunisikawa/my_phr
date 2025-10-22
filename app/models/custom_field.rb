@@ -1,10 +1,13 @@
 class CustomField < ApplicationRecord
+  attr_accessor :options_text
+
   FIELD_TYPES = %w[text number boolean select].freeze
   CATEGORIES = %w[profile health activity].freeze
 
   belongs_to :user
 
   validates :name, presence: true, length: { maximum: 30 }
+  validates :name, uniqueness: { scope: %i[user_id category] }
   validates :field_type, inclusion: { in: FIELD_TYPES }
   validates :category, inclusion: { in: CATEGORIES }
   validate :options_must_match_field_type
