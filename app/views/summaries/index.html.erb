@@ -25,6 +25,21 @@
 </div>
 
 <% if @summary.present? && @summary.buckets.any? %>
+  <% if @chart_data.present? %>
+    <div class="card shadow-sm mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="h6 mb-0">トレンド可視化</h3>
+        <span class="text-muted small">
+          <%= { "daily" => "日次", "weekly" => "週次", "monthly" => "月次" }[@period] || @period %>ビュー
+        </span>
+      </div>
+      <div class="card-body">
+        <p class="text-muted small">気分・ストレス・疲労・運動時間の関係を Google チャートで可視化します。</p>
+        <%= tag.div "", id: "summary-chart", data: { chart_data: @chart_data, chart_period: @period }, style: "min-height: 360px;" %>
+      </div>
+    </div>
+  <% end %>
+
   <% @summary.buckets.each do |bucket| %>
     <div class="card shadow-sm mb-3">
       <div class="card-header d-flex justify-content-between align-items-center">
