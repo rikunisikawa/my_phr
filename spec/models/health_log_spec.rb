@@ -8,8 +8,8 @@ RSpec.describe HealthLog, type: :model do
     expect(log).to be_valid
   end
 
-  it "requires logged_on" do
-    log = build(:health_log, user: user, logged_on: nil)
+  it "requires recorded_at" do
+    log = build(:health_log, user: user, recorded_at: nil)
     expect(log).not_to be_valid
   end
 
@@ -23,11 +23,11 @@ RSpec.describe HealthLog, type: :model do
     expect(log).not_to be_valid
   end
 
-  it "filters by date range" do
-    older = create(:health_log, user: user, logged_on: Date.current - 5.days)
-    newer = create(:health_log, user: user, logged_on: Date.current)
+  it "filters by datetime range" do
+    older = create(:health_log, user: user, recorded_at: 5.days.ago)
+    newer = create(:health_log, user: user, recorded_at: Time.zone.now)
 
-    results = described_class.between(Date.current - 1.day, Date.current + 1.day)
+    results = described_class.between(1.day.ago, 1.day.from_now)
 
     expect(results).to include(newer)
     expect(results).not_to include(older)

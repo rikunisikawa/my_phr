@@ -35,6 +35,9 @@
               <li class="nav-item">
                 <%= link_to "サマリー", summaries_path, class: "nav-link#{controller_name == 'summaries' ? ' active' : ''}" %>
               </li>
+              <li class="nav-item">
+                <%= link_to "カスタム項目設定", custom_fields_path, class: "nav-link#{controller_name == 'custom_fields' ? ' active' : ''}" %>
+              </li>
             </ul>
             <div class="d-flex align-items-center gap-2">
               <span class="text-white-50 small"><%= current_user.email %></span>

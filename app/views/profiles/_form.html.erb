@@ -14,11 +14,22 @@
     </div>
   </div>
 
-  <% custom_fields_raw = params.dig(:profile, :custom_fields_json) %>
   <div class="mt-4">
-    <%= f.label :custom_fields, "カスタム項目(JSON)", class: "form-label" %>
-    <%= text_area_tag "profile[custom_fields_json]", custom_fields_raw.presence || JSON.pretty_generate(@profile.custom_fields || {}), class: "form-control", rows: 4 %>
-    <div class="form-text">例: {"blood_type":"A","goal_steps":8000}</div>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h3 class="h6 mb-0">カスタム項目</h3>
+      <% if @profile_custom_fields.any? %>
+        <%= link_to "設定を編集", custom_fields_path(anchor: "profile"), class: "btn btn-outline-secondary btn-sm" %>
+      <% end %>
+    </div>
+    <% if @profile_custom_fields.any? %>
+      <%= render "custom_fields/inputs",
+                 fields: @profile_custom_fields,
+                 values: @profile.custom_fields || {},
+                 form_prefix: "profile" %>
+    <% else %>
+      <p class="text-muted small mb-2">カスタム項目は現在設定されていません。</p>
+      <%= link_to "カスタム項目を設定する", custom_fields_path(anchor: "profile"), class: "btn btn-outline-secondary btn-sm" %>
+    <% end %>
   </div>
 
   <div class="mt-4 d-flex gap-2">

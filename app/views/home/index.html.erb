@@ -39,7 +39,7 @@
       </div>
       <div class="card-body">
         <% if @latest_record.present? %>
-          <p class="text-muted mb-1"><%= @latest_record.logged_on %> の記録</p>
+          <p class="text-muted mb-1"><%= @latest_record.recorded_at ? l(@latest_record.recorded_at, format: "%Y-%m-%d %H:%M") : "日時未設定" %> の記録</p>
           <ul class="list-unstyled mb-3">
             <li>気分: <strong><%= @latest_record.mood || "-" %></strong></li>
             <li>ストレス: <strong><%= @latest_record.stress_level || "-" %></strong></li>
