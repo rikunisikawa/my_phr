@@ -87,6 +87,7 @@
               <% else %>
                 <p class="text-muted small mb-1">運動のカスタム項目は設定されていません。</p>
                 <%= link_to "カスタム項目を設定する", custom_fields_path(anchor: "activity"), class: "btn btn-outline-secondary btn-sm" %>
+              <% end %>
             </div>
 
             <% if activity_form.object.persisted? %>

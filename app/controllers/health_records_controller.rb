@@ -10,7 +10,6 @@ class HealthRecordsController < ApplicationController
 
   def new
     @health_record = current_user.health_logs.build(recorded_at: Time.zone.now)
-    build_activity_slots
   end
 
   def edit; end
