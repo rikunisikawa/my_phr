@@ -13,89 +13,102 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-      <div class="container">
-        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="<%= user_signed_in? ? root_path : root_path %>">
-          <span class="material-symbols-outlined" aria-hidden="true">health_and_safety</span>
-          <span>My PHR</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarContent">
-          <% if user_signed_in? %>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+  <body class="app-body bg-light">
+    <div class="app-shell d-flex">
+      <nav id="appSidebar" class="app-sidebar bg-primary text-white shadow-sm">
+        <div class="app-sidebar-header d-flex align-items-center justify-content-between px-3 py-3">
+          <a class="navbar-brand fw-bold d-flex align-items-center gap-2 text-white" href="<%= user_signed_in? ? root_path : root_path %>">
+            <span class="material-symbols-outlined" aria-hidden="true">health_and_safety</span>
+            <span class="brand-text">My PHR</span>
+          </a>
+          <button class="btn btn-sm btn-outline-light d-inline-flex align-items-center gap-2 js-sidebar-toggle" type="button" aria-controls="appSidebar" aria-expanded="true">
+            <span class="material-symbols-outlined toggle-icon" aria-hidden="true">chevron_left</span>
+            <span class="toggle-label">折りたたむ</span>
+          </button>
+        </div>
+
+        <% if user_signed_in? %>
+          <div class="app-sidebar-content flex-grow-1 overflow-auto px-3">
+            <ul class="nav nav-pills flex-column gap-1">
               <li class="nav-item">
-                <%= link_to root_path, class: "nav-link d-flex align-items-center gap-2#{current_page?(root_path) ? ' active' : ''}" do %>
+                <%= link_to root_path, title: "ダッシュボード", class: "nav-link d-flex align-items-center gap-2#{current_page?(root_path) ? ' active' : ''}" do %>
                   <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
-                  <span>ダッシュボード</span>
+                  <span class="nav-text">ダッシュボード</span>
                 <% end %>
               </li>
               <li class="nav-item">
-                <%= link_to profile_path, class: "nav-link d-flex align-items-center gap-2#{controller_name == 'profiles' ? ' active' : ''}" do %>
+                <%= link_to profile_path, title: "基本情報", class: "nav-link d-flex align-items-center gap-2#{controller_name == 'profiles' ? ' active' : ''}" do %>
                   <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
-                  <span>基本情報</span>
+                  <span class="nav-text">基本情報</span>
                 <% end %>
               </li>
               <li class="nav-item">
-                <%= link_to health_records_path, class: "nav-link d-flex align-items-center gap-2#{controller_name == 'health_records' ? ' active' : ''}" do %>
+                <%= link_to health_records_path, title: "健康ログ", class: "nav-link d-flex align-items-center gap-2#{controller_name == 'health_records' ? ' active' : ''}" do %>
                   <span class="material-symbols-outlined" aria-hidden="true">note_alt</span>
-                  <span>健康ログ</span>
+                  <span class="nav-text">健康ログ</span>
                 <% end %>
               </li>
               <li class="nav-item">
-                <%= link_to summaries_path, class: "nav-link d-flex align-items-center gap-2#{controller_name == 'summaries' ? ' active' : ''}" do %>
+                <%= link_to summaries_path, title: "サマリー", class: "nav-link d-flex align-items-center gap-2#{controller_name == 'summaries' ? ' active' : ''}" do %>
                   <span class="material-symbols-outlined" aria-hidden="true">insights</span>
-                  <span>サマリー</span>
+                  <span class="nav-text">サマリー</span>
                 <% end %>
               </li>
               <li class="nav-item">
-                <%= link_to custom_fields_path, class: "nav-link d-flex align-items-center gap-2#{controller_name == 'custom_fields' ? ' active' : ''}" do %>
+                <%= link_to custom_fields_path, title: "カスタム項目設定", class: "nav-link d-flex align-items-center gap-2#{controller_name == 'custom_fields' ? ' active' : ''}" do %>
                   <span class="material-symbols-outlined" aria-hidden="true">tune</span>
-                  <span>カスタム項目設定</span>
+                  <span class="nav-text">カスタム項目設定</span>
                 <% end %>
               </li>
             </ul>
-            <div class="d-flex align-items-center gap-2">
-              <span class="text-white-50 small"><%= current_user.email %></span>
-              <%= button_to destroy_user_session_path, method: :delete, class: "btn btn-sm btn-outline-light d-inline-flex align-items-center gap-2" do %>
-                <span class="material-symbols-outlined" aria-hidden="true">logout</span>
-                <span>ログアウト</span>
-              <% end %>
+          </div>
+          <div class="app-sidebar-footer px-3 pb-3 pt-2 mt-auto">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="material-symbols-outlined" aria-hidden="true">person</span>
+              <span class="user-email small text-white-50"><%= current_user.email %></span>
             </div>
-          <% else %>
-            <div class="ms-auto d-flex gap-2">
-              <%= link_to new_user_session_path, class: "btn btn-outline-light btn-sm d-inline-flex align-items-center gap-2" do %>
+            <%= button_to destroy_user_session_path, method: :delete, class: "btn btn-sm btn-outline-light w-100 d-inline-flex align-items-center justify-content-center gap-2" do %>
+              <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+              <span class="nav-text">ログアウト</span>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="app-sidebar-content flex-grow-1 overflow-auto px-3">
+            <div class="d-flex flex-column gap-2">
+              <%= link_to new_user_session_path, class: "btn btn-outline-light btn-sm d-inline-flex align-items-center justify-content-center gap-2" do %>
                 <span class="material-symbols-outlined" aria-hidden="true">login</span>
-                <span>ログイン</span>
+                <span class="nav-text">ログイン</span>
               <% end %>
               <% if devise_mapping.registerable? %>
-                <%= link_to new_user_registration_path, class: "btn btn-light btn-sm d-inline-flex align-items-center gap-2" do %>
+                <%= link_to new_user_registration_path, class: "btn btn-light btn-sm d-inline-flex align-items-center justify-content-center gap-2" do %>
                   <span class="material-symbols-outlined" aria-hidden="true">person_add</span>
-                  <span>新規登録</span>
+                  <span class="nav-text">新規登録</span>
                 <% end %>
               <% end %>
             </div>
-          <% end %>
+          </div>
+        <% end %>
+      </nav>
+
+      <div class="app-main flex-grow-1">
+        <div class="container-fluid py-4">
+          <div class="container">
+            <% flash.each do |type, message| %>
+              <% bootstrap_class = case type.to_sym
+                when :notice then "alert-success"
+                when :alert then "alert-danger"
+                else "alert-info"
+              end %>
+              <div class="alert <%= bootstrap_class %> alert-dismissible fade show" role="alert">
+                <%= message %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% end %>
+
+            <%= yield %>
+          </div>
         </div>
       </div>
-    </nav>
-
-    <div class="container py-4">
-      <% flash.each do |type, message| %>
-        <% bootstrap_class = case type.to_sym
-          when :notice then "alert-success"
-          when :alert then "alert-danger"
-          else "alert-info"
-        end %>
-        <div class="alert <%= bootstrap_class %> alert-dismissible fade show" role="alert">
-          <%= message %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      <% end %>
-
-      <%= yield %>
     </div>
   </body>
 </html>
