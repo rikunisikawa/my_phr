@@ -5,3 +5,4 @@ Turbo.start()
 
 import "./summary_chart"
 import "./custom_field_form"
+import "./sidebar"
