@@ -1,10 +1,16 @@
 <div class="row g-3 align-items-center mb-4">
   <div class="col-md-8">
-    <h1 class="h3 mb-2">ダッシュボード</h1>
+    <h1 class="h3 mb-2 d-flex align-items-center gap-2">
+      <span class="material-symbols-outlined text-primary" aria-hidden="true">space_dashboard</span>
+      <span>ダッシュボード</span>
+    </h1>
     <p class="text-muted mb-0">最新の健康状態と週次サマリーを確認できます。</p>
   </div>
   <div class="col-md-4 text-md-end">
-    <%= link_to "健康ログを登録", new_health_record_path, class: "btn btn-primary" %>
+    <%= link_to new_health_record_path, class: "btn btn-primary d-inline-flex align-items-center gap-2" do %>
+      <span class="material-symbols-outlined" aria-hidden="true">add_circle</span>
+      <span>健康ログを登録</span>
+    <% end %>
   </div>
 </div>
 
@@ -12,21 +18,39 @@
   <div class="col-lg-4">
     <div class="card shadow-sm h-100">
       <div class="card-header">
-        <h2 class="h6 mb-0">プロフィール概要</h2>
+        <h2 class="h6 mb-0 d-flex align-items-center gap-2">
+          <span class="material-symbols-outlined text-primary" aria-hidden="true">badge</span>
+          <span>プロフィール概要</span>
+        </h2>
       </div>
       <div class="card-body">
         <% if @profile.present? && @profile.persisted? %>
           <ul class="list-unstyled mb-0">
-            <li class="mb-2"><span class="text-muted">年齢:</span> <%= @profile.age || "-" %></li>
-            <li class="mb-2"><span class="text-muted">身長:</span> <%= @profile.height_cm ? "#{@profile.height_cm} cm" : "-" %></li>
-            <li><span class="text-muted">体重:</span> <%= @profile.weight_kg ? "#{@profile.weight_kg} kg" : "-" %></li>
+            <li class="mb-2 d-flex align-items-center gap-2">
+              <span class="material-symbols-outlined text-primary" aria-hidden="true">cake</span>
+              <span><span class="text-muted">年齢:</span> <%= @profile.age || "-" %></span>
+            </li>
+            <li class="mb-2 d-flex align-items-center gap-2">
+              <span class="material-symbols-outlined text-primary" aria-hidden="true">straighten</span>
+              <span><span class="text-muted">身長:</span> <%= @profile.height_cm ? "#{@profile.height_cm} cm" : "-" %></span>
+            </li>
+            <li class="d-flex align-items-center gap-2">
+              <span class="material-symbols-outlined text-primary" aria-hidden="true">monitor_weight</span>
+              <span><span class="text-muted">体重:</span> <%= @profile.weight_kg ? "#{@profile.weight_kg} kg" : "-" %></span>
+            </li>
           </ul>
           <div class="mt-3">
-            <%= link_to "基本情報を見る", profile_path, class: "btn btn-outline-primary btn-sm" %>
+            <%= link_to profile_path, class: "btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-2" do %>
+              <span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>
+              <span>基本情報を見る</span>
+            <% end %>
           </div>
         <% else %>
           <p class="text-muted">基本情報が未登録です。</p>
-          <%= link_to "登録する", edit_profile_path, class: "btn btn-outline-primary btn-sm" %>
+          <%= link_to edit_profile_path, class: "btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-2" do %>
+            <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+            <span>登録する</span>
+          <% end %>
         <% end %>
       </div>
     </div>
@@ -35,17 +59,32 @@
   <div class="col-lg-4">
     <div class="card shadow-sm h-100">
       <div class="card-header">
-        <h2 class="h6 mb-0">最新の健康ログ</h2>
+        <h2 class="h6 mb-0 d-flex align-items-center gap-2">
+          <span class="material-symbols-outlined text-primary" aria-hidden="true">monitor_heart</span>
+          <span>最新の健康ログ</span>
+        </h2>
       </div>
       <div class="card-body">
         <% if @latest_record.present? %>
           <p class="text-muted mb-1"><%= @latest_record.recorded_at ? l(@latest_record.recorded_at, format: "%Y-%m-%d %H:%M") : "日時未設定" %> の記録</p>
           <ul class="list-unstyled mb-3">
-            <li>気分: <strong><%= @latest_record.mood || "-" %></strong></li>
-            <li>ストレス: <strong><%= @latest_record.stress_level || "-" %></strong></li>
-            <li>疲労感: <strong><%= @latest_record.fatigue_level || "-" %></strong></li>
+            <li class="d-flex align-items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-primary" aria-hidden="true">sentiment_satisfied</span>
+              <span>気分: <strong><%= @latest_record.mood || "-" %></strong></span>
+            </li>
+            <li class="d-flex align-items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-primary" aria-hidden="true">self_improvement</span>
+              <span>ストレス: <strong><%= @latest_record.stress_level || "-" %></strong></span>
+            </li>
+            <li class="d-flex align-items-center gap-2">
+              <span class="material-symbols-outlined text-primary" aria-hidden="true">bedtime</span>
+              <span>疲労感: <strong><%= @latest_record.fatigue_level || "-" %></strong></span>
+            </li>
           </ul>
-          <%= link_to "詳細を見る", health_record_path(@latest_record), class: "btn btn-outline-primary btn-sm" %>
+          <%= link_to health_record_path(@latest_record), class: "btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-2" do %>
+            <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+            <span>詳細を見る</span>
+          <% end %>
         <% else %>
           <p class="text-muted mb-0">健康ログが登録されていません。</p>
         <% end %>
@@ -56,19 +95,37 @@
   <div class="col-lg-4">
     <div class="card shadow-sm h-100">
       <div class="card-header">
-        <h2 class="h6 mb-0">週次サマリー</h2>
+        <h2 class="h6 mb-0 d-flex align-items-center gap-2">
+          <span class="material-symbols-outlined text-primary" aria-hidden="true">query_stats</span>
+          <span>週次サマリー</span>
+        </h2>
       </div>
       <div class="card-body">
         <% if @weekly_summary.present? && @weekly_summary.buckets.any? %>
           <% latest_bucket = @weekly_summary.buckets.last %>
           <p class="text-muted mb-2"><%= latest_bucket.label %></p>
           <ul class="list-unstyled mb-3">
-            <li>平均気分: <strong><%= latest_bucket.averages[:mood]&.round(1) || "-" %></strong></li>
-            <li>平均ストレス: <strong><%= latest_bucket.averages[:stress_level]&.round(1) || "-" %></strong></li>
-            <li>平均疲労: <strong><%= latest_bucket.averages[:fatigue_level]&.round(1) || "-" %></strong></li>
-            <li>運動時間合計: <strong><%= latest_bucket.total_activity_duration %> 分</strong></li>
+            <li class="d-flex align-items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-primary" aria-hidden="true">mood</span>
+              <span>平均気分: <strong><%= latest_bucket.averages[:mood]&.round(1) || "-" %></strong></span>
+            </li>
+            <li class="d-flex align-items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-primary" aria-hidden="true">spa</span>
+              <span>平均ストレス: <strong><%= latest_bucket.averages[:stress_level]&.round(1) || "-" %></strong></span>
+            </li>
+            <li class="d-flex align-items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-primary" aria-hidden="true">bedtime</span>
+              <span>平均疲労: <strong><%= latest_bucket.averages[:fatigue_level]&.round(1) || "-" %></strong></span>
+            </li>
+            <li class="d-flex align-items-center gap-2">
+              <span class="material-symbols-outlined text-primary" aria-hidden="true">directions_run</span>
+              <span>運動時間合計: <strong><%= latest_bucket.total_activity_duration %> 分</strong></span>
+            </li>
           </ul>
-          <%= link_to "サマリー詳細", summaries_path(period: "weekly"), class: "btn btn-outline-primary btn-sm" %>
+          <%= link_to summaries_path(period: "weekly"), class: "btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-2" do %>
+            <span class="material-symbols-outlined" aria-hidden="true">analytics</span>
+            <span>サマリー詳細</span>
+          <% end %>
         <% else %>
           <p class="text-muted mb-0">サマリーを表示できるデータがありません。</p>
         <% end %>

@@ -25,3 +25,31 @@ body {
 
 @import "_material_overrides";
 @import 'custom_material';
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'OPSZ' 24;
+  font-size: 1.25rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.navbar-brand .material-symbols-outlined {
+  font-size: 1.6rem;
+}
+
+.nav-link .material-symbols-outlined {
+  font-size: 1.3rem;
+}
+
+.btn .material-symbols-outlined {
+  font-size: 1.1rem;
+}
+
+.card-header .material-symbols-outlined {
+  font-size: 1.3rem;
+}
+
+.list-unstyled .material-symbols-outlined,
+.list-group-item .material-symbols-outlined {
+  font-size: 1.25rem;
+}
