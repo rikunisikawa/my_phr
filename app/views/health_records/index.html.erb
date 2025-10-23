@@ -1,6 +1,12 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h2 class="h4 mb-0">健康ログ一覧</h2>
-  <%= link_to "新規登録", new_health_record_path, class: "btn btn-primary" %>
+  <h2 class="h4 mb-0 d-flex align-items-center gap-2">
+    <span class="material-symbols-outlined text-primary" aria-hidden="true">monitoring</span>
+    <span>健康ログ一覧</span>
+  </h2>
+  <%= link_to new_health_record_path, class: "btn btn-primary d-inline-flex align-items-center gap-2" do %>
+    <span class="material-symbols-outlined" aria-hidden="true">post_add</span>
+    <span>新規登録</span>
+  <% end %>
 </div>
 
 <% if notice.present? %>
@@ -32,9 +38,18 @@
             <td><%= record.fatigue_level || "-" %></td>
             <td><%= record.activity_logs.count %>件</td>
             <td class="text-end">
-              <%= link_to "詳細", health_record_path(record), class: "btn btn-sm btn-outline-primary me-1" %>
-              <%= link_to "編集", edit_health_record_path(record), class: "btn btn-sm btn-outline-secondary me-1" %>
-              <%= link_to "削除", health_record_path(record), class: "btn btn-sm btn-outline-danger", data: { turbo_method: :delete, turbo_confirm: "削除してよろしいですか？" } %>
+              <%= link_to health_record_path(record), class: "btn btn-sm btn-outline-primary me-1 d-inline-flex align-items-center gap-1" do %>
+                <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+                <span>詳細</span>
+              <% end %>
+              <%= link_to edit_health_record_path(record), class: "btn btn-sm btn-outline-secondary me-1 d-inline-flex align-items-center gap-1" do %>
+                <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                <span>編集</span>
+              <% end %>
+              <%= link_to health_record_path(record), class: "btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1", data: { turbo_method: :delete, turbo_confirm: "削除してよろしいですか？" } do %>
+                <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+                <span>削除</span>
+              <% end %>
             </td>
           </tr>
         <% end %>
