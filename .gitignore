@@ -21,6 +21,8 @@
 # Ignore uploaded files in development.
 /storage/*
 !/storage/.keep
+!/storage/external_metrics/
+!/storage/external_metrics/.keep
 /tmp/storage/*
 !/tmp/storage/
 !/tmp/storage/.keep
