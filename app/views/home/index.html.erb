@@ -14,6 +14,77 @@
   </div>
 </div>
 
+<div class="row g-3 mt-1">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h2 class="h6 mb-0 d-flex align-items-center gap-2">
+          <span class="material-symbols-outlined text-primary" aria-hidden="true">ecg_heart</span>
+          <span>環境センサーデータ</span>
+        </h2>
+        <% if @environmental_source_file.present? %>
+          <span class="badge bg-light text-muted">最新ファイル: <%= @environmental_source_file.basename %></span>
+        <% end %>
+      </div>
+      <div class="card-body">
+        <% if @environmental_data_error.present? %>
+          <div class="alert alert-warning" role="alert">
+            外部データの読み込みに失敗しました: <%= @environmental_data_error %>
+          </div>
+        <% end %>
+
+        <% if @environmental_samples.present? %>
+          <% latest_sample = @environmental_samples.last %>
+          <div class="row g-3 align-items-end mb-3">
+            <div class="col-md-4">
+              <p class="text-muted mb-1">最新の測定</p>
+              <p class="h5 mb-0">
+                <span class="d-block small text-muted">取得時刻</span>
+                <%= l(latest_sample[:timestamp], format: "%Y-%m-%d %H:%M") %>
+              </p>
+            </div>
+            <div class="col-md-8">
+              <div class="row g-2 text-center text-md-start">
+                <div class="col-4">
+                  <div class="border rounded-3 p-3 h-100">
+                    <p class="text-muted small mb-1">温度</p>
+                    <p class="fs-5 fw-semibold mb-0"><%= latest_sample[:temperature]&.round(1) %>℃</p>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="border rounded-3 p-3 h-100">
+                    <p class="text-muted small mb-1">湿度</p>
+                    <p class="fs-5 fw-semibold mb-0"><%= latest_sample[:humidity]&.round(1) %>%</p>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="border rounded-3 p-3 h-100">
+                    <p class="text-muted small mb-1">CO₂</p>
+                    <p class="fs-5 fw-semibold mb-0"><%= latest_sample[:co2]&.round %>ppm</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="environment-chart"
+               class="environment-chart"
+               data-chart-data="<%= @environmental_chart_data ? j(@environmental_chart_data.to_json) : nil %>"
+               style="min-height: 320px;">
+          </div>
+        <% else %>
+          <p class="text-muted mb-3">
+            表示できる外部データがありません。`storage/external_metrics` フォルダに `datetime, Temperature, Humidity, CO2` のヘッダーを持つ CSV ファイルを配置すると、最新ファイルを自動的に読み込みます。
+          </p>
+          <div id="environment-chart" class="environment-chart" style="min-height: 120px;"></div>
+        <% end %>
+
+        <p class="text-muted small mb-0">CSV ファイルはローカルで管理され、アップロードは不要です。最新ファイルがダッシュボードに反映されます。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row g-3">
   <div class="col-lg-4">
     <div class="card shadow-sm h-100">

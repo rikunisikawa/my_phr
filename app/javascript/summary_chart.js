@@ -1,34 +1,9 @@
-const GOOGLE_CHART_LOADER = "https://www.gstatic.com/charts/loader.js";
-let googleChartsPromise;
+import { loadGoogleCharts } from "./lib/google_charts_loader";
 let chartInstance;
 let chartDataTable;
 let chartOptions;
 let chartContainerRef;
 let resizeListenerRegistered = false;
-
-function loadGoogleCharts() {
-  if (window.google && window.google.charts) {
-    return Promise.resolve();
-  }
-
-  if (!googleChartsPromise) {
-    googleChartsPromise = new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = GOOGLE_CHART_LOADER;
-      script.async = true;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error("Failed to load Google Charts"));
-      document.head.appendChild(script);
-    }).then(() => {
-      window.google.charts.load("current", { packages: ["corechart"] });
-      return new Promise((resolve) => {
-        window.google.charts.setOnLoadCallback(resolve);
-      });
-    });
-  }
-
-  return googleChartsPromise;
-}
 
 function formatNoDataMessage(container) {
   container.innerHTML = "<p class='text-muted small mb-0'>表示できるデータがありません。</p>";
@@ -119,6 +94,10 @@ function renderSummaryChart() {
 }
 
 function resetChartState() {
+  if (resizeListenerRegistered) {
+    window.removeEventListener("resize", redrawChart);
+    resizeListenerRegistered = false;
+  }
   chartInstance = null;
   chartDataTable = null;
   chartOptions = null;
