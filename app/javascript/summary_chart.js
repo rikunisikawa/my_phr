@@ -44,8 +44,10 @@ function drawChart(chartData, container) {
   });
 
   const periodKey = container.dataset.chartPeriod || "";
-  const periodLabelMap = { daily: "日次", weekly: "週次", monthly: "月次" };
+  const periodLabelMap = { daily: "日次", hourly: "時間別", weekly: "週次", monthly: "月次" };
+  const hAxisTitleMap = { hourly: "時間帯", daily: "日付", weekly: "週", monthly: "月" };
   const periodLabel = periodLabelMap[periodKey] || periodKey;
+  const hAxisTitle = hAxisTitleMap[periodKey] || "期間";
   const options = {
     title: periodLabel ? `${periodLabel}の指標推移` : "指標推移",
     legend: { position: "bottom" },
@@ -57,7 +59,7 @@ function drawChart(chartData, container) {
       0: { title: "平均値 (1-5)" },
       1: { title: "運動時間 (分)" }
     },
-    hAxis: { title: "期間" },
+    hAxis: { title: hAxisTitle },
     focusTarget: "category",
     chartArea: { width: "80%", height: "65%" },
     height: Math.max(container.offsetHeight, 360)

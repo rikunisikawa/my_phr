@@ -1,5 +1,5 @@
 class SummariesController < ApplicationController
-  PERIODS = %w[daily weekly monthly].freeze
+  PERIODS = %w[daily hourly weekly monthly].freeze
 
   def index
     @period = PERIODS.include?(params[:period]) ? params[:period] : "daily"

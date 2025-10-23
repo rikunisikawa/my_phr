@@ -7,7 +7,7 @@
     <%= form_with url: summaries_path, method: :get, local: true, class: "row g-3 align-items-end" do |f| %>
       <div class="col-sm-4">
         <label class="form-label" for="period">期間</label>
-        <%= select_tag :period, options_for_select([["日次", "daily"], ["週次", "weekly"], ["月次", "monthly"]], @period), class: "form-select" %>
+        <%= select_tag :period, options_for_select(summary_period_options, @period), class: "form-select" %>
       </div>
       <div class="col-sm-3">
         <label class="form-label" for="from">開始日</label>
@@ -30,7 +30,7 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="h6 mb-0">トレンド可視化</h3>
         <span class="text-muted small">
-          <%= { "daily" => "日次", "weekly" => "週次", "monthly" => "月次" }[@period] || @period %>ビュー
+          <%= summary_period_label(@period) %>ビュー
         </span>
       </div>
       <div class="card-body">
@@ -44,7 +44,7 @@
     <div class="card shadow-sm mb-3">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="h6 mb-0"><%= bucket.label %></h3>
-        <span class="text-muted small"><%= bucket.from %> 〜 <%= bucket.to %></span>
+        <span class="text-muted small"><%= summary_bucket_range(bucket, @period) %></span>
       </div>
       <div class="card-body">
         <div class="row g-3">

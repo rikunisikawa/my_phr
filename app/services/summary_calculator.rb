@@ -2,7 +2,8 @@ class SummaryCalculator
   PERIOD_UNITS = {
     "daily" => :day,
     "weekly" => :week,
-    "monthly" => :month
+    "monthly" => :month,
+    "hourly" => :hour
   }.freeze
 
   Result = Struct.new(:period, :range, :buckets, keyword_init: true)
@@ -21,13 +22,13 @@ class SummaryCalculator
     @user = user
     @period = period
     @start_date = parse_date(start_date) || default_start_date
-    @end_date = parse_date(end_date) || Date.current
+    @end_date = parse_date(end_date) || default_end_date
     validate_period!
   end
 
   def call
     logs = @user.health_logs.between(@start_date, @end_date).includes(:activity_logs)
-    grouped = logs.group_by { |log| bucket_start_for(log.recorded_at.to_date) }
+    grouped = logs.group_by { |log| bucket_start_for(log.recorded_at.in_time_zone) }
 
     buckets = grouped.sort_by { |start_date, _| start_date }.map do |bucket_start, bucket_logs|
       build_bucket(bucket_start, bucket_logs)
@@ -35,7 +36,10 @@ class SummaryCalculator
 
     Result.new(
       period: @period,
-      range: { from: @start_date, to: @end_date },
+      range: {
+        from: HealthLog.cast_time(@start_date, upper_bound: false) || @start_date,
+        to: HealthLog.cast_time(@end_date, upper_bound: true) || @end_date
+      },
       buckets: buckets
     )
   end
@@ -62,17 +66,25 @@ class SummaryCalculator
       Date.current.beginning_of_month
     when "monthly"
       Date.current.beginning_of_year
+    when "hourly"
+      Date.current
     end
   end
 
-  def bucket_start_for(date)
+  def default_end_date
+    Date.current
+  end
+
+  def bucket_start_for(timestamp)
     case PERIOD_UNITS[@period]
     when :day
-      date
+      timestamp.to_date
     when :week
-      date.beginning_of_week
+      timestamp.to_date.beginning_of_week
     when :month
-      date.beginning_of_month
+      timestamp.to_date.beginning_of_month
+    when :hour
+      timestamp.beginning_of_hour
     end
   end
 
@@ -84,6 +96,8 @@ class SummaryCalculator
       start_date.end_of_week
     when :month
       start_date.end_of_month
+    when :hour
+      start_date.end_of_hour
     end
   end
 
@@ -202,6 +216,8 @@ class SummaryCalculator
       "Week of #{start_date.strftime('%Y-%m-%d')}"
     when :month
       start_date.strftime("%Y-%m")
+    when :hour
+      start_date.strftime("%m/%d %H:%M")
     end
   end
 end
