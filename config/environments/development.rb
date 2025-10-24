@@ -67,4 +67,15 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
+
+  # Allow access when exposing the development server via Cloudflare Tunnel.
+  config.hosts << /.*trycloudflare\.com$/
+
+  # Permit access to the Rails web console from remote devices when tunneled.
+  config.web_console.allowed_ips = "0.0.0.0/0"
+
+  config.action_cable.allowed_request_origins = [
+    %r{\Ahttps://.*trycloudflare\.com\z},
+    %r{\Ahttp://localhost:3000\z}
+  ]
 end
