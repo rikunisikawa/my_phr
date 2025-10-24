@@ -19,10 +19,45 @@ function drawChart(chartData, container) {
   });
 
   const periodKey = container.dataset.chartPeriod || "";
-  const periodLabelMap = { daily: "日次", hourly: "時間別", weekly: "週次", monthly: "月次" };
-  const hAxisTitleMap = { hourly: "時間帯", daily: "日付", weekly: "週", monthly: "月" };
+  const timeframeValue = parseInt(container.dataset.chartTimeframe || "", 10);
+  const periodLabelMap = { daily: "日次", short_term: "短期推移", weekly: "週次", monthly: "月次" };
+  const hAxisTitleMap = { short_term: "時刻", daily: "日付", weekly: "週", monthly: "月" };
   const periodLabel = periodLabelMap[periodKey] || periodKey;
   const hAxisTitle = hAxisTitleMap[periodKey] || "期間";
+  const isShortTerm = periodKey === "short_term";
+  const shouldShowMarkers = !isShortTerm || Number.isNaN(timeframeValue) || timeframeValue <= 12;
+  const primaryPointSize = shouldShowMarkers ? 6 : 0;
+  const sensorPointSize = shouldShowMarkers ? 5 : 0;
+
+  const seriesConfig = {
+    0: { type: "line", targetAxisIndex: 0, pointSize: primaryPointSize, color: "#1a73e8" },
+    1: { type: "line", targetAxisIndex: 0, pointSize: primaryPointSize, color: "#fbbc04" },
+    2: { type: "line", targetAxisIndex: 0, pointSize: primaryPointSize, color: "#d81b60" },
+    3: { type: "bars", targetAxisIndex: 1, color: "#43a047" }
+  };
+
+  if (dataTable.getNumberOfColumns() >= 6) {
+    seriesConfig[4] = { type: "line", targetAxisIndex: 2, pointSize: sensorPointSize, color: "#ef5350" };
+  }
+  if (dataTable.getNumberOfColumns() >= 7) {
+    seriesConfig[5] = { type: "line", targetAxisIndex: 2, pointSize: sensorPointSize, color: "#1e88e5" };
+  }
+  if (dataTable.getNumberOfColumns() >= 8) {
+    seriesConfig[6] = { type: "line", targetAxisIndex: 3, pointSize: sensorPointSize, color: "#6d4c41" };
+  }
+
+  const vAxesConfig = {
+    0: { title: "平均値 (1-5)" },
+    1: { title: "運動時間 (分)" }
+  };
+
+  if (dataTable.getNumberOfColumns() >= 6) {
+    vAxesConfig[2] = { title: "温湿度 (°C / %)" };
+  }
+  if (dataTable.getNumberOfColumns() >= 8) {
+    vAxesConfig[3] = { title: "CO₂ (ppm)" };
+  }
+
   const options = {
     title: periodLabel ? `${periodLabel}の指標推移` : "指標推移",
     legend: { position: "bottom" },

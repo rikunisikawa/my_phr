@@ -51,13 +51,22 @@ RSpec.describe SummaryCalculator do
     create(:health_log, user: user, recorded_at: Time.zone.now.change(hour: 9, min: 45), mood: 50, stress_level: 25, fatigue_level: 45)
     create(:health_log, user: user, recorded_at: Time.zone.now.change(hour: 18, min: 5), mood: 65, stress_level: 55, fatigue_level: 40)
 
-    result = described_class.new(user: user, period: "hourly", start_date: Date.current, end_date: Date.current).call
+    start_time = Time.zone.now.beginning_of_day
+    end_time = Time.zone.now.end_of_day
+    result = described_class.new(user: user, period: "short_term", start_date: start_time, end_date: end_time).call
 
-    expect(result.period).to eq("hourly")
+    expect(result.period).to eq("short_term")
     expect(result.buckets.map(&:label)).to include("06/01 09:00", "06/01 18:00")
 
     morning_bucket = result.buckets.find { |bucket| bucket.label == "06/01 09:00" }
     expect(morning_bucket.total_activity_duration).to be >= 0
     expect(morning_bucket.averages[:mood]).to be_within(0.01).of(60.0)
+  end
+
+  it "accepts the legacy hourly identifier" do
+    result = described_class.new(user: user, period: "hourly").call
+
+    expect(result.period).to eq("hourly")
+    expect(result.buckets).to be_an(Array)
   end
 end
