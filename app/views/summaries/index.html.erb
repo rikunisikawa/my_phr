@@ -9,14 +9,29 @@
         <label class="form-label" for="period">期間</label>
         <%= select_tag :period, options_for_select(summary_period_options, @period), class: "form-select" %>
       </div>
-      <div class="col-sm-3">
-        <label class="form-label" for="from">開始日</label>
-        <%= date_field_tag :from, params[:from], class: "form-control" %>
-      </div>
-      <div class="col-sm-3">
-        <label class="form-label" for="to">終了日</label>
-        <%= date_field_tag :to, params[:to], class: "form-control" %>
-      </div>
+      <% if @period == "short_term" %>
+        <div class="col-sm-4 col-md-3">
+          <label class="form-label" for="to">終了日時</label>
+          <%= datetime_field_tag :to,
+                                 @short_term_end_time&.in_time_zone&.strftime("%Y-%m-%dT%H:%M"),
+                                 class: "form-control" %>
+        </div>
+        <div class="col-sm-4 col-md-3">
+          <label class="form-label" for="timeframe_hours">表示範囲</label>
+          <%= select_tag :timeframe_hours,
+                         options_for_select(short_term_timeframe_options, @timeframe_hours),
+                         class: "form-select" %>
+        </div>
+      <% else %>
+        <div class="col-sm-3">
+          <label class="form-label" for="from">開始日</label>
+          <%= date_field_tag :from, params[:from], class: "form-control" %>
+        </div>
+        <div class="col-sm-3">
+          <label class="form-label" for="to">終了日</label>
+          <%= date_field_tag :to, params[:to], class: "form-control" %>
+        </div>
+      <% end %>
       <div class="col-sm-2 text-sm-end">
         <%= f.submit "再表示", class: "btn btn-primary w-100" %>
       </div>
@@ -35,7 +50,10 @@
       </div>
       <div class="card-body">
         <p class="text-muted small">気分・ストレス・疲労・運動時間の関係を Google チャートで可視化します。</p>
-        <%= tag.div "", id: "summary-chart", data: { chart_data: @chart_data, chart_period: @period }, style: "min-height: 360px;" %>
+        <%= tag.div "",
+                    id: "summary-chart",
+                    data: { chart_data: @chart_data, chart_period: @period, chart_timeframe: (@period == "short_term" ? @timeframe_hours : nil) },
+                    style: "min-height: 360px;" %>
       </div>
     </div>
   <% end %>

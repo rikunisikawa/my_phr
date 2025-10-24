@@ -1,7 +1,7 @@
 module ApplicationHelper
   SUMMARY_PERIOD_OPTIONS = [
     ["日次", "daily"],
-    ["時間別", "hourly"],
+    ["短期推移", "short_term"],
     ["週次", "weekly"],
     ["月次", "monthly"]
   ].freeze
@@ -39,11 +39,15 @@ module ApplicationHelper
     SUMMARY_PERIOD_LABELS.fetch(period.to_s, period.to_s)
   end
 
+  def short_term_timeframe_options
+    SummaryPeriodConfig.short_term_timeframe_options
+  end
+
   def summary_bucket_range(bucket, period)
     return "-" if bucket.from.blank? || bucket.to.blank?
 
     case period.to_s
-    when "hourly"
+    when "short_term"
       from = ensure_time(bucket.from)
       to = ensure_time(bucket.to)
       "#{from.strftime('%Y-%m-%d %H:%M')} 〜 #{to.strftime('%H:%M')}"
