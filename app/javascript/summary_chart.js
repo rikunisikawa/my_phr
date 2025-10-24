@@ -31,7 +31,7 @@ function drawChart(chartData, container) {
       3: { type: "bars", targetAxisIndex: 1 }
     },
     vAxes: {
-      0: { title: "平均値 (1-5)" },
+      0: { title: "平均値 (0-100)" },
       1: { title: "運動時間 (分)" }
     },
     hAxis: { title: hAxisTitle },

@@ -2,9 +2,9 @@ FactoryBot.define do
   factory :health_log do
     association :user
     recorded_at { Time.zone.now }
-    mood { 5 }
-    stress_level { 4 }
-    fatigue_level { 3 }
+    mood { 80 }
+    stress_level { 40 }
+    fatigue_level { 30 }
     notes { "Feeling okay" }
     custom_fields { { "blood_pressure" => 120 } }
 

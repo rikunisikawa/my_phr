@@ -4,7 +4,7 @@ RSpec.describe "Dashboard flow", type: :system do
   let(:user) { create(:user, email: "user@example.com", password: "password") }
 
   it "allows a signed-in user to view dashboard and navigate" do
-    create(:health_log, user: user, recorded_at: Time.zone.now.change(sec: 0), mood: 3)
+    create(:health_log, user: user, recorded_at: Time.zone.now.change(sec: 0), mood: 70)
 
     visit new_user_session_path
     fill_in "user_email", with: user.email

@@ -7,19 +7,48 @@
       <%= f.label :recorded_at, "記録日時", class: "form-label" %>
       <%= f.datetime_field :recorded_at, class: "form-control", step: 60 %>
     </div>
-    <div class="col-md-8 d-flex gap-3 flex-wrap">
-      <% score_options = (1..5).map { |value| [value, value] } %>
-      <div class="flex-grow-1">
-        <%= f.label :mood, "気分(1-5)", class: "form-label" %>
-        <%= f.select :mood, options_for_select(score_options, @health_record.mood), { include_blank: "選択してください" }, class: "form-select" %>
+    <div class="col-md-8 d-flex gap-3 flex-wrap" data-health-sliders>
+      <% mood_value = @health_record.mood.nil? ? 50 : @health_record.mood %>
+      <div class="flex-grow-1" data-health-slider>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <%= f.label :mood, "気分(0-100)", class: "form-label mb-0" %>
+          <span class="badge text-bg-light" data-health-slider-value><%= mood_value %></span>
+        </div>
+        <%= f.range_field :mood,
+                          class: "form-range",
+                          min: 0,
+                          max: 100,
+                          step: 1,
+                          value: mood_value,
+                          data: { health_slider_input: true } %>
       </div>
-      <div class="flex-grow-1">
-        <%= f.label :stress_level, "ストレス(1-5)", class: "form-label" %>
-        <%= f.select :stress_level, options_for_select(score_options, @health_record.stress_level), { include_blank: "選択してください" }, class: "form-select" %>
+      <% stress_value = @health_record.stress_level.nil? ? 50 : @health_record.stress_level %>
+      <div class="flex-grow-1" data-health-slider>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <%= f.label :stress_level, "ストレス(0-100)", class: "form-label mb-0" %>
+          <span class="badge text-bg-light" data-health-slider-value><%= stress_value %></span>
+        </div>
+        <%= f.range_field :stress_level,
+                          class: "form-range",
+                          min: 0,
+                          max: 100,
+                          step: 1,
+                          value: stress_value,
+                          data: { health_slider_input: true } %>
       </div>
-      <div class="flex-grow-1">
-        <%= f.label :fatigue_level, "疲労感(1-5)", class: "form-label" %>
-        <%= f.select :fatigue_level, options_for_select(score_options, @health_record.fatigue_level), { include_blank: "選択してください" }, class: "form-select" %>
+      <% fatigue_value = @health_record.fatigue_level.nil? ? 50 : @health_record.fatigue_level %>
+      <div class="flex-grow-1" data-health-slider>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <%= f.label :fatigue_level, "疲労感(0-100)", class: "form-label mb-0" %>
+          <span class="badge text-bg-light" data-health-slider-value><%= fatigue_value %></span>
+        </div>
+        <%= f.range_field :fatigue_level,
+                          class: "form-range",
+                          min: 0,
+                          max: 100,
+                          step: 1,
+                          value: fatigue_value,
+                          data: { health_slider_input: true } %>
       </div>
     </div>
   </div>
@@ -47,7 +76,7 @@
     <% end %>
   </div>
 
-  <div class="mt-4" data-activity-logs-container>
+  <div class="mt-4" data-activity-logs-container data-activity-logs-persist="<%= @health_record.persisted? ? "false" : "true" %>">
     <div class="d-flex align-items-center justify-content-between">
       <h3 class="h6 mb-0">運動記録</h3>
       <button type="button" class="btn btn-outline-primary btn-sm" data-activity-logs-add-button>運動記録を追加</button>
@@ -60,7 +89,7 @@
                                   else
                                     "{}"
                                   end %>
-        <div class="card shadow-sm" data-activity-logs-item>
+        <div class="card shadow-sm" data-activity-logs-item data-activity-log-uuid="<%= activity_form.object.id || activity_form.index %>">
           <div class="card-body">
             <div class="row g-3">
               <div class="col-md-4">
@@ -107,7 +136,7 @@
 
     <template data-activity-logs-template>
       <%= f.fields_for :activity_logs, @health_record.activity_logs.build, child_index: "NEW_RECORD" do |activity_form| %>
-        <div class="card shadow-sm" data-activity-logs-item>
+        <div class="card shadow-sm" data-activity-logs-item data-activity-log-uuid="NEW_RECORD">
           <div class="card-body">
             <div class="row g-3">
               <div class="col-md-4">

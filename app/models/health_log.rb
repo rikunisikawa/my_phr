@@ -6,7 +6,7 @@ class HealthLog < ApplicationRecord
 
   validates :recorded_at, presence: true
   validates :mood, :stress_level, :fatigue_level,
-            numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 5 },
+            numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 100 },
             allow_nil: true
   validate :custom_fields_must_be_object
 

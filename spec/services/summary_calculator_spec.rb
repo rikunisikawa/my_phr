@@ -9,10 +9,10 @@ RSpec.describe SummaryCalculator do
 
   let(:user) { create(:user) }
   let!(:health_log) do
-    create(:health_log, :with_activity, user: user, recorded_at: Time.zone.now.change(sec: 0), mood: 5, stress_level: 4, fatigue_level: 3)
+    create(:health_log, :with_activity, user: user, recorded_at: Time.zone.now.change(sec: 0), mood: 85, stress_level: 40, fatigue_level: 25)
   end
   let!(:health_log_previous_week) do
-    create(:health_log, :with_activity, user: user, recorded_at: 7.days.ago.change(sec: 0), mood: 3, stress_level: 5, fatigue_level: 4)
+    create(:health_log, :with_activity, user: user, recorded_at: 7.days.ago.change(sec: 0), mood: 60, stress_level: 70, fatigue_level: 55)
   end
   let!(:health_field) { create(:custom_field, :number_health, user: user, name: "blood_pressure") }
   let!(:activity_field) { create(:custom_field, :number_activity, user: user, name: "calories") }
@@ -47,9 +47,9 @@ RSpec.describe SummaryCalculator do
   end
 
   it "groups logs by hour for the hourly period" do
-    create(:health_log, user: user, recorded_at: Time.zone.now.change(hour: 9, min: 15), mood: 4, stress_level: 3, fatigue_level: 2)
-    create(:health_log, user: user, recorded_at: Time.zone.now.change(hour: 9, min: 45), mood: 2, stress_level: 2, fatigue_level: 4)
-    create(:health_log, user: user, recorded_at: Time.zone.now.change(hour: 18, min: 5), mood: 3, stress_level: 4, fatigue_level: 3)
+    create(:health_log, user: user, recorded_at: Time.zone.now.change(hour: 9, min: 15), mood: 70, stress_level: 30, fatigue_level: 20)
+    create(:health_log, user: user, recorded_at: Time.zone.now.change(hour: 9, min: 45), mood: 50, stress_level: 25, fatigue_level: 45)
+    create(:health_log, user: user, recorded_at: Time.zone.now.change(hour: 18, min: 5), mood: 65, stress_level: 55, fatigue_level: 40)
 
     result = described_class.new(user: user, period: "hourly", start_date: Date.current, end_date: Date.current).call
 
@@ -58,6 +58,6 @@ RSpec.describe SummaryCalculator do
 
     morning_bucket = result.buckets.find { |bucket| bucket.label == "06/01 09:00" }
     expect(morning_bucket.total_activity_duration).to be >= 0
-    expect(morning_bucket.averages[:mood]).to be_within(0.01).of(3.0)
+    expect(morning_bucket.averages[:mood]).to be_within(0.01).of(60.0)
   end
 end

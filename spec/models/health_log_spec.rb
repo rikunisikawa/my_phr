@@ -18,8 +18,8 @@ RSpec.describe HealthLog, type: :model do
     expect(log).not_to be_valid
   end
 
-  it "requires scores to be within 1 to 5" do
-    log = build(:health_log, user: user, mood: 6)
+  it "requires scores to be within 0 to 100" do
+    log = build(:health_log, user: user, mood: 120)
     expect(log).not_to be_valid
   end
 

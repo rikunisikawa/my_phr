@@ -23,9 +23,9 @@ RSpec.describe "Api::V1::HealthLogs", type: :request do
       post "/api/v1/health_logs", params: {
         health_log: {
           recorded_at: Time.zone.now.iso8601,
-          mood: 3,
-          stress_level: 2,
-          fatigue_level: 4,
+          mood: 65,
+          stress_level: 40,
+          fatigue_level: 55,
           notes: "Feeling good",
           custom_fields: { sleep_hours: 7 },
           activity_logs_attributes: [
@@ -47,12 +47,12 @@ RSpec.describe "Api::V1::HealthLogs", type: :request do
 
   describe "PUT /api/v1/health_logs/:id" do
     it "updates a health log" do
-      log = create(:health_log, user: user, mood: 2)
+      log = create(:health_log, user: user, mood: 20)
 
-      put "/api/v1/health_logs/#{log.id}", params: { health_log: { mood: 4 } }
+      put "/api/v1/health_logs/#{log.id}", params: { health_log: { mood: 75 } }
 
       expect(response).to have_http_status(:ok)
-      expect(log.reload.mood).to eq(4)
+      expect(log.reload.mood).to eq(75)
     end
   end
 
