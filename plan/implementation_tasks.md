@@ -17,3 +17,4 @@
 6. [T6. サマリー API](tasks/T6_summary_api.md)
 7. [T7. フロントエンド UI 骨組み](tasks/T7_frontend.md)
 8. [T8. 総合テストとドキュメント更新](tasks/T8_integration.md)
+9. [Cloudflare Tunnel 公開手順計画](../plans/cloudflare_tunnel_setup.md)
