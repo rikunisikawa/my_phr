@@ -5,7 +5,7 @@ RSpec.describe "Api::V1::Summaries", type: :request do
 
   before do
     sign_in user
-    health_log = create(:health_log, :with_activity, user: user, recorded_at: Time.zone.now.change(sec: 0), mood: 4, stress_level: 3, fatigue_level: 2)
+    health_log = create(:health_log, :with_activity, user: user, recorded_at: Time.zone.now.change(sec: 0), mood: 70, stress_level: 45, fatigue_level: 30)
     health_log.activity_logs.first.update!(duration_minutes: 45)
   end
 

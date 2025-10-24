@@ -62,8 +62,13 @@ function drawChart(chartData, container) {
     title: periodLabel ? `${periodLabel}の指標推移` : "指標推移",
     legend: { position: "bottom" },
     seriesType: "line",
-    series: seriesConfig,
-    vAxes: vAxesConfig,
+    series: {
+      3: { type: "bars", targetAxisIndex: 1 }
+    },
+    vAxes: {
+      0: { title: "平均値 (0-100)" },
+      1: { title: "運動時間 (分)" }
+    },
     hAxis: { title: hAxisTitle },
     focusTarget: "category",
     chartArea: { width: "80%", height: "65%" },
