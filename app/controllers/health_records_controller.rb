@@ -53,44 +53,55 @@ class HealthRecordsController < ApplicationController
       :fatigue_level,
       :notes,
       { custom_field_values: {} },
-      activity_logs_attributes: [
-        :id,
-        :activity_type,
-        :duration_minutes,
-        :intensity,
-        :_destroy,
-        { custom_field_values: {} }
-      ]
+      activity_logs_attributes: {}
     )
 
     attributes = permitted.to_h
     attributes["custom_fields"] = build_custom_fields(@health_custom_fields, attributes.delete("custom_field_values"))
 
-    if attributes["activity_logs_attributes"].present?
-      attributes["activity_logs_attributes"].transform_values! do |activity_attrs|
-        attrs = activity_attrs.to_h
+    activity_attributes = attributes.delete("activity_logs_attributes")
+    if activity_attributes.present?
+      processed_attributes = activity_attributes.each_with_object({}) do |(index, activity_attrs), result|
+        attrs = activity_attrs.to_h.slice(
+          "id",
+          "activity_type",
+          "duration_minutes",
+          "intensity",
+          "_destroy",
+          "custom_field_values",
+          "custom_fields_raw"
+        )
+        raw_json = attrs.delete("custom_fields_raw")
         raw_values = attrs.delete("custom_field_values")
+        raw_values = parse_custom_fields_json(raw_json) if raw_values.blank? && raw_json.present?
 
         if attrs["activity_type"].blank?
           if attrs["id"].present?
             attrs["_destroy"] = true
-            next attrs.symbolize_keys
-          else
-            next {}
+            result[index] = attrs.symbolize_keys
           end
+          next
         end
 
         attrs["custom_fields"] = build_custom_fields(@activity_custom_fields, raw_values)
-        attrs.symbolize_keys
+        result[index] = attrs.symbolize_keys
       end
-      attributes["activity_logs_attributes"].delete_if { |_key, attrs| attrs.blank? }
+
+      attributes["activity_logs_attributes"] = processed_attributes if processed_attributes.present?
     end
 
-    attributes.deep_symbolize_keys
+    attributes.symbolize_keys
   end
 
   def build_custom_fields(definitions, raw_values)
     CustomFieldValueBuilder.new(definitions).build(raw_values)
+  end
+
+  def parse_custom_fields_json(raw_json)
+    parsed = JSON.parse(raw_json)
+    parsed.is_a?(Hash) ? parsed : {}
+  rescue JSON::ParserError, TypeError
+    {}
   end
 
   def set_custom_field_definitions

@@ -63,9 +63,16 @@ function renderEnvironmentChart() {
     return
   }
 
+  const sanitizedData = rawData.replace(/^\uFEFF/, "").trim()
+  const htmlDecoded = sanitizedData
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&")
+  const normalizedData = htmlDecoded.replace(/\\"/g, '"')
+
   let chartData
   try {
-    chartData = JSON.parse(rawData)
+    chartData = JSON.parse(normalizedData)
   } catch (error) {
     console.error("Failed to parse environment chart data", error)
     formatNoDataMessage(container)
