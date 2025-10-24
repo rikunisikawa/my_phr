@@ -3,6 +3,7 @@ class SummaryCalculator
     "daily" => :day,
     "weekly" => :week,
     "monthly" => :month,
+    "short_term" => :hour,
     "hourly" => :hour
   }.freeze
 
@@ -66,13 +67,17 @@ class SummaryCalculator
       Date.current.beginning_of_month
     when "monthly"
       Date.current.beginning_of_year
-    when "hourly"
-      Date.current
+    when "short_term", "hourly"
+      Time.current - 2.hours
     end
   end
 
   def default_end_date
-    Date.current
+    if short_term_period?
+      Time.current
+    else
+      Date.current
+    end
   end
 
   def bucket_start_for(timestamp)
@@ -219,5 +224,9 @@ class SummaryCalculator
     when :hour
       start_date.strftime("%m/%d %H:%M")
     end
+  end
+
+  def short_term_period?
+    @period == "short_term" || @period == "hourly"
   end
 end
